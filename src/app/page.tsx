@@ -7,19 +7,25 @@ import {
   useWallets,
 } from "@privy-io/react-auth";
 import { useState } from "react";
+// import { useRouter } from 'next/router';
 
 export default function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { ready, authenticated, user, createWallet } = usePrivy();
   const { wallets } = useWallets();
+  // const router = useRouter();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
+  console.log(user);
+  
 
   const { login } = useLogin({
     async onComplete(user) {
+      console.log(user);
+      
       if (authenticated) {
         if (wallets.length === 0) {
           const res = createWallet();

@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="h-screen bg-gradient-radial from-[#80e5f7] via-[#2dd1fe] to-[#06acff]">
+      <body className="h-screen">
         <Providers>{children}</Providers>
       </body>
     </html>
