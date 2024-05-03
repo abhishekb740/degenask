@@ -6,15 +6,16 @@ import {
   usePrivy,
   useWallets,
 } from "@privy-io/react-auth";
-import { useState } from "react";
-// import { useRouter } from 'next/router';
+import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import Button from "./components/Button";
 
 export default function Home() {
+  const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { ready, authenticated, user, createWallet } = usePrivy();
   const { wallets } = useWallets();
-  // const router = useRouter();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -32,6 +33,7 @@ export default function Home() {
         }
       }
       setIsLoggedIn(true);
+      router.push(`/${user?.farcaster?.username}`)
     },
     onError(error) {
       console.log("🔑 🚨 Login error", { error });
