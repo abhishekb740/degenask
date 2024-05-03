@@ -9,6 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Button from "./components/Button";
+import Logo from "./components/Logo";
+import FarcasterLogo from "../../public/assets/FarcasterLogo.png";
 
 export default function Home() {
   const router = useRouter();
@@ -33,7 +35,7 @@ export default function Home() {
         }
       }
       setIsLoggedIn(true);
-      router.push(`/${user?.farcaster?.username}`)
+      // router.push(`/${user?.farcaster?.username}`)
     },
     onError(error) {
       console.log("🔑 🚨 Login error", { error });
@@ -49,14 +51,15 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
       <h1 className="text-[4rem] font-semibold bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-violet-500/80">
-        /Farstack
+        Farstack
       </h1>
       {!isLoggedIn ? (
         <button
-          className="flex w-fit px-5 py-2 text-neutral-100 bg-violet-500 hover:text-gray-50 hover:shadow-lg rounded-lg"
+          className="flex w-fit gap-2 px-5 py-2 items-center text-neutral-100 bg-violet-500 hover:text-gray-50 hover:shadow-lg rounded-lg"
           onClick={login}
           disabled={!ready && authenticated}
         >
+          <Logo src={FarcasterLogo} height={20} width={20} />
           Connect Farcaster
         </button>
       ) : (
