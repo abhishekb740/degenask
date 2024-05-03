@@ -35,7 +35,7 @@ export default function Home() {
         }
       }
       setIsLoggedIn(true);
-      // router.push(`/${user?.farcaster?.username}`)
+      router.push(`/${user?.farcaster?.username}`)
     },
     onError(error) {
       console.log("🔑 🚨 Login error", { error });
