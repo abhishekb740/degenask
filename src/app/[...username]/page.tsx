@@ -5,7 +5,8 @@ import {
     usePrivy,
     useWallets,
 } from "@privy-io/react-auth";
-import { init, useQuery } from "@airstack/airstack-react";
+import Logo from "../components/Logo";
+import DegenLogo from "../../../public/assets/DegenLogo.png";
 
 const Profile = ({ params: { username } }) => {
     const { ready, authenticated, user, createWallet } = usePrivy();
@@ -64,16 +65,19 @@ const Profile = ({ params: { username } }) => {
                             Set Price
                         </button>
                     </div>
-                    <div className="flex justify-between">
-                        <div>
+                    <div className="flex justify-between px-4">
+                        <div className="text-[#818898]">
                             0 DEGEN
                         </div>
-                        <div>
-                            
-                            <label for="degen-logo">Degen</label>
-                            <select id="degen-logo" className="text-[#009DF5]" >
+                        <div className="flex items-center">
+                            <Logo src={DegenLogo} height={25} width={25} />
+                            <select id="degen-logo" className="" >
+                                <option>Degen</option>
                             </select>
                         </div>
+                    </div>
+                    <div>
+                        
                     </div>
                 </div>
                 <div>

@@ -6,17 +6,19 @@ import { StaticImageData } from 'next/image';
 export interface ILogo {
     src: string | StaticImageData;
     className?: string;
+    height: number;
+    width: number;
 }
 
-const Logo: FunctionComponent<ILogo> = ({ src }) => {
+const Logo: FunctionComponent<ILogo> = ({ src, height, width }) => {
     return (
         <div>
             <Image
                 src={src}
                 alt="Logo"
                 className="object-cover cursor-pointer"
-                height={20}
-                width={20}
+                height={height}
+                width={width}
             />
         </div>
     );
