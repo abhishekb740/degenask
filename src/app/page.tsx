@@ -1,16 +1,9 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import {
-  useLogin,
-  useLogout,
-  usePrivy,
-  useWallets,
-} from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
-import Button from "./components/Button";
-import Logo from "./components/Logo";
-import FarcasterLogo from "../../public/assets/FarcasterLogo.png";
+import { useLogin, useLogout, usePrivy, useWallets } from "@privy-io/react-auth";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Logo from "../components/Logo";
 
 export default function Home() {
   const router = useRouter();
@@ -23,19 +16,18 @@ export default function Home() {
     setIsDropdownOpen((prevState) => !prevState);
   };
   console.log(user);
-  
 
   const { login } = useLogin({
     async onComplete(user) {
       console.log(user);
-      
+
       if (authenticated) {
         if (wallets.length === 0) {
           const res = createWallet();
         }
       }
       setIsLoggedIn(true);
-      router.push(`/${user?.farcaster?.username}`)
+      router.push(`/${user?.farcaster?.username}`);
     },
     onError(error) {
       console.log("🔑 🚨 Login error", { error });
@@ -59,7 +51,7 @@ export default function Home() {
           onClick={login}
           disabled={!ready && authenticated}
         >
-          <Logo src={FarcasterLogo} height={20} width={20} />
+          <Logo src={"/logo/farcaster.png"} height={20} width={20} />
           Connect Farcaster
         </button>
       ) : (
@@ -69,11 +61,7 @@ export default function Home() {
             onClick={toggleDropdown}
           >
             <span className="flex flex-row items-center gap-x-4">
-              <img
-                src={user?.farcaster?.pfp!}
-                alt="icon"
-                className="w-10 h-10 rounded-full"
-              />
+              <img src={user?.farcaster?.pfp!} alt="icon" className="w-10 h-10 rounded-full" />
               {user?.farcaster?.username}
             </span>
           </button>
@@ -82,10 +70,7 @@ export default function Home() {
               isDropdownOpen ? "block absolute" : "hidden"
             }  mt-1 z-10 divide-y divide-gray-100 rounded-lg shadow w-44 bg-neutral-900/95`}
           >
-            <ul
-              className="py-2 text-sm text-gray-200"
-              aria-labelledby="dropdown-button"
-            >
+            <ul className="py-2 text-sm text-gray-200" aria-labelledby="dropdown-button">
               <li>
                 <button
                   type="button"

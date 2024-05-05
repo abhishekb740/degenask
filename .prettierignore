@@ -1,0 +1,26 @@
+# Ignore specific files and directories
+
+# Dependency directories
+node_modules/
+
+# Build output directories
+dist/
+build/
+out/
+
+# Logs
+logs/
+*.log
+
+# Temporary folders
+tmp/
+temp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Misc
+.DS_Store
+.yaml
