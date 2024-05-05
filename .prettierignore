@@ -23,4 +23,4 @@ temp/
 
 # Misc
 .DS_Store
-.yaml
+pnpm-lock.yaml
