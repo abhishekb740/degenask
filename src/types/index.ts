@@ -9,3 +9,12 @@ interface User {
 export interface Profile {
   user: User;
 }
+
+export interface UserData {
+  username: string;
+  name: string;
+  bio: string;
+  followers: number;
+  image: string;
+  count: number;
+}
