@@ -10,6 +10,7 @@ import type { Profile, UserData } from "@/types";
 import AskQuestion from "./ask";
 import { feedAtom } from "@/store";
 import Button from "@/components/form/button";
+import Questions from "./questions";
 // import Questions from "./questions";
 
 export default function Profile({ user }: Profile) {
@@ -64,6 +65,8 @@ export default function Profile({ user }: Profile) {
           <Setup user={user} />
         ) : feed === "ask" ? (
           <AskQuestion price={price} />
+        ) : username === fcUser?.farcaster?.username ? (
+          <Questions user={user} />
         ) : (
           <Button
             id="button"
