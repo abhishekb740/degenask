@@ -1,14 +1,15 @@
-import React from "react";
-import { StaticImageData } from "next/image";
-import { FunctionComponent } from "react";
+import React, { ReactNode } from "react";
 
 interface IButton {
   id: string;
   label?: string;
-  title: string;
+  title: string | ReactNode;
+  helper?: string;
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
-const Button: FunctionComponent<IButton> = ({ id, label, title }) => {
+const Button = ({ id, label, title, helper, onClick, disabled }: IButton) => {
   return (
     <div>
       <label
@@ -18,10 +19,17 @@ const Button: FunctionComponent<IButton> = ({ id, label, title }) => {
       >
         {label}
       </label>
-      <button id={id} className={"bg-[#009DF5] w-full p-2 rounded-md text-white"}>
-        <div className="font-medium md:text-sm lg:text-lg xl:text-sm">{title}</div>
+      <button
+        id={id}
+        onClick={onClick}
+        className="bg-indigo-500 hover:bg-indigo-600 text-white p-2.5 rounded-lg w-full disabled:cursor-progress"
+        disabled={disabled}
+      >
+        <div className="font-medium font-primary text-sm md:text-md lg:text-lg">{title}</div>
       </button>
+      <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>
     </div>
   );
 };
+
 export default Button;

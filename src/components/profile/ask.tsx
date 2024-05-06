@@ -1,16 +1,14 @@
-import React from "react";
+"use client";
 import { useState } from "react";
-import { FunctionComponent } from "react";
-import TextArea from "../form/textarea";
-import Button from "../form/button";
+import TextArea from "@/components/form/textarea";
+import Button from "@/components/form/button";
 
-interface IAskAQuestionProps {
+interface IAskQuestionProps {
   price: number;
 }
 
-const AskAQuestion: FunctionComponent<IAskAQuestionProps> = ({ price }) => {
+export default function AskQuestion({ price }: IAskQuestionProps) {
   const [questionContent, setQuestionContent] = useState<string>();
-
   return (
     <div>
       <div className="mb-6">
@@ -18,16 +16,14 @@ const AskAQuestion: FunctionComponent<IAskAQuestionProps> = ({ price }) => {
           id="content"
           name="content"
           label="Ask a question"
-          placeholder="What is your favourite colour?"
+          placeholder="Farcon India wen?"
           value={questionContent}
           onChange={(e) => setQuestionContent(e.target.value)}
         />
       </div>
       <div>
-        <Button id="button" title="Submit Your Question" />
+        <Button id="button" title={`Pay ${price} DEGEN`} />
       </div>
     </div>
   );
-};
-
-export default AskAQuestion;
+}

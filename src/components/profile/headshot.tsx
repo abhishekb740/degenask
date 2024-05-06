@@ -1,20 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import { feedAtom } from "@/store";
 import { UserData } from "@/types";
 import { useLogout, usePrivy } from "@privy-io/react-auth";
+import { useSetAtom } from "jotai";
 import toast from "react-hot-toast";
 import { FaRegEdit } from "react-icons/fa";
 import { FiCopy, FiLogOut } from "react-icons/fi";
 import { MdPeople } from "react-icons/md";
 import { SiAnswer } from "react-icons/si";
+import Dialog from "@/components/form/dialog";
+import { useState } from "react";
 
 interface IHeadshotProps {
   data: UserData;
-  setSetup: (value: boolean) => void;
 }
 
-export default function Headshot({ data, setSetup }: IHeadshotProps) {
+export default function Headshot({ data }: IHeadshotProps) {
   const { username, name, bio, followers, image, count } = data;
+  const setFeed = useSetAtom(feedAtom);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const { user } = usePrivy();
   const { logout } = useLogout();
 
@@ -64,14 +69,16 @@ export default function Headshot({ data, setSetup }: IHeadshotProps) {
           <div>
             <span
               onClick={() => {
-                setSetup(true);
+                setFeed("setup");
               }}
               className="absolute right-[6.8rem] bg-indigo-100 hover:bg-indigo-200 hover:text-indigo-800 p-2.5 rounded-full cursor-pointer"
             >
               <FaRegEdit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
             <span
-              onClick={logout}
+              onClick={() => {
+                setShowDialog(true);
+              }}
               className="absolute right-[4rem] bg-red-100 hover:bg-red-200 hover:text-red-600 p-2.5 rounded-full cursor-pointer"
             >
               <FiLogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -79,6 +86,27 @@ export default function Headshot({ data, setSetup }: IHeadshotProps) {
           </div>
         )}
       </div>
+      <Dialog isEnabled={showDialog} setOutsideClick={setShowDialog}>
+        <div className="flex flex-col w-[90vw] md:w-[30vw] p-7 rounded-lg bg-[#1c1c1c] font-primary shadow-xl justify-center items-center gap-4">
+          <h1 className="text-xl text-white">Do you want to Logout?</h1>
+          <span className="w-full flex flex-row gap-2.5">
+            <button
+              onClick={() => {
+                setShowDialog(false);
+              }}
+              className="w-full px-4 py-2 border border-red-500 hover:bg-red-500 text-white text-sm rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={logout}
+              className="w-full px-4 py-2 border border-indigo-500 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg"
+            >
+              Logout
+            </button>
+          </span>
+        </div>
+      </Dialog>
       <hr className="my-5 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25" />
     </div>
   );

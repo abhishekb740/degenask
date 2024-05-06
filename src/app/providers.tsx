@@ -1,18 +1,24 @@
 "use client";
 
 import { PrivyProvider } from "@privy-io/react-auth";
-import { baseSepolia } from "viem/chains";
+import { RainbowKitProvider, darkTheme, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { baseSepolia } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
-import config from "@/utils/wagmi";
-import { ConnectKitProvider } from "connectkit";
+
+const config = getDefaultConfig({
+  appName: "Farstack",
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
+  chains: [baseSepolia],
+  ssr: true,
+});
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider theme="retro">
+        <RainbowKitProvider modalSize="compact" theme={darkTheme()}>
           <PrivyProvider
             appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
             config={{
@@ -30,7 +36,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           >
             {children}
           </PrivyProvider>
-        </ConnectKitProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
