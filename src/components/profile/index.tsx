@@ -6,6 +6,7 @@ import Setup from "./setup";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
 import type { Profile, UserData } from "@/types";
+import AskAQuestion from "./askAQuestion";
 
 export default function Profile({ user }: Profile) {
   const { username, address, price, count } = user;
@@ -55,6 +56,7 @@ export default function Profile({ user }: Profile) {
       <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 md:h-3/5 lg:w-2/4 font-primary rounded-xl border border-neutral-400/60 shadow-xl">
         {!loading && userData && <Headshot data={userData as UserData} setSetup={setSetup} />}
         {setup && <Setup user={user} />}
+        {!setup && <AskAQuestion price={price} />}
       </div>
     </div>
   );
