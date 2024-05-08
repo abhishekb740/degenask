@@ -62,7 +62,7 @@ export default function Hero() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
       <h1 className="text-[4rem] font-title font-semibold bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-violet-500/80">
-        /Farstack
+        /DegenAsk.me
       </h1>
       {!isLoggedIn ? (
         <button

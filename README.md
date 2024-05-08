@@ -1,6 +1,6 @@
 # Farstack
 
-<img alt="Farstack" src="public/farstack.png"  width="100" height="100"/>
+<img alt="Farstack" src="public//DegenAsk.meLogo.png"  width="100" height="100"/>
 
 Social Q&A app on Base where answers can make money for you. Pay to ask & earn when others peek into the answers.
 

@@ -5,9 +5,9 @@ import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Farstack",
-  description: "Built at Based Fellowship",
-  icons: "/farstack.png",
+  title: "DegenAsk.me",
+  description: "Get paid to ask questions.",
+  icons: "/DegenAsk.meLogo.png",
 };
 
 export default function RootLayout({
