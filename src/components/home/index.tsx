@@ -61,8 +61,9 @@ export default function Hero() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+      <img src="degenask.png" className="w-36 h-48" alt="degenask_logo" />
       <h1 className="text-[4rem] font-title font-semibold bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-violet-500/80">
-        /Farstack
+        /DegenAsk
       </h1>
       {!isLoggedIn ? (
         <button

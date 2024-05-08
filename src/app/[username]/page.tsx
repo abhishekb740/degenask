@@ -1,8 +1,40 @@
 import { Profile } from "@/components";
+import { Metadata } from "next";
+
+type Props = {
+  params: {
+    username: string;
+  };
+};
 
 export const fetchCache = "force-no-store";
 
-export default async function Creator({ params }: { params: { username: string } }) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const username = params.username;
+
+  return {
+    title: `${username} | DegenAsk`,
+    icons: "/favicon.png",
+    description:
+      "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: "https://degenask.me",
+      siteName: "DegenAsk",
+      images: [
+        {
+          url: "/metadata.png",
+          width: 800,
+          height: 600,
+          alt: "DegenAsk",
+        },
+      ],
+    },
+  };
+}
+
+export default async function Creator({ params }: Props) {
   const user = await fetch(
     `${process.env.NEXT_PUBLIC_HOST_URL}/api/getCreator?username=${params.username}`,
     {

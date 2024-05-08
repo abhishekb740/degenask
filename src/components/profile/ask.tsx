@@ -16,7 +16,7 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
           id="content"
           name="content"
           label="Ask a question"
-          placeholder="Farcon India wen?"
+          placeholder="Degen IRL party wen?"
           value={questionContent}
           onChange={(e) => setQuestionContent(e.target.value)}
         />

@@ -1,6 +1,6 @@
-# Farstack
+# DegenAsk
 
-<img alt="Farstack" src="public/farstack.png"  width="100" height="100"/>
+<img alt="DegenAsk" src="public/favicon.png"  width="100" height="100"/>
 
 Social Q&A app on Base where answers can make money for you. Pay to ask & earn when others peek into the answers.
 
@@ -15,8 +15,8 @@ Follow the instructions for the local environment: The user must have Node.js an
 **Clone the repo via CLI:**
 
 ```sh
-git clone https://github.com/neel-ds/farstack.git
-cd farstack
+git clone https://github.com/neel-ds/degenask.git
+cd degenask
 ```
 
 **Install the required packages:**
