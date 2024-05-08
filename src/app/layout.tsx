@@ -5,9 +5,26 @@ import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "DegenAsk.me",
-  description: "Get paid to ask questions.",
-  icons: "/DegenAsk.meLogo.png",
+  title: "DegenAsk",
+  description:
+    "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
+  icons: "/favicon.png",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://degenask.me",
+    title: "DegenAsk",
+    description:
+      "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
+    images: [
+      {
+        url: "/metadata.png",
+        width: 800,
+        height: 600,
+        alt: "DegenAsk",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
