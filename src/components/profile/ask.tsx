@@ -2,7 +2,7 @@
 import { useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
-import { IoArrowBackCircle } from "react-icons/io5";
+import { IoMdArrowBack } from "react-icons/io";
 import { useAtomValue, useSetAtom } from "jotai";
 import { feedAtom } from "@/store";
 
@@ -21,8 +21,12 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
 
   return (
     <div>
-      <div onClick={handleBack} className="cursor-pointer">
-        <IoArrowBackCircle size={30} />
+      <div
+        onClick={handleBack}
+        className="cursor-pointer items-center inline-flex text-sm text-neutral-700 gap-2"
+      >
+        <IoMdArrowBack size={25} />
+        <div>Go Back</div>
       </div>
       <div className="mb-5">
         <TextArea
