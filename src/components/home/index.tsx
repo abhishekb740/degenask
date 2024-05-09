@@ -60,7 +60,7 @@ export default function Hero() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-20">
       <img src="degenask.png" className="w-36 h-48" alt="degenask_logo" />
       <h1 className="text-[4rem] font-title font-semibold bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-violet-500/80">
         /DegenAsk
@@ -77,7 +77,7 @@ export default function Hero() {
       ) : (
         <div>
           <button
-            className="block w-fit px-5 py-1.5 font-primary text-neutral-50 border border-teal-100 hover:border-amber-100 bg-gradient-to-tr from-orange-200 to-indigo-400  hover:text-gray-50 hover:shadow-lg rounded-lg"
+            className="block w-fit px-5 py-1.5 font-primary text-neutral-50 border border-teal-100 hover:border-amber-100 bg-gradient-to-tr from-indigo-200 to-indigo-400  hover:text-gray-50 hover:shadow-lg rounded-lg"
             onClick={toggleDropdown}
           >
             <span className="flex flex-row items-center gap-x-4">

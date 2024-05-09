@@ -76,8 +76,8 @@ export default function Profile({ user }: Profile) {
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
-      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 md:h-3/5 lg:w-2/4 font-primary rounded-xl border border-neutral-400/60 shadow-xl">
-        {!loading && userData && <Headshot data={userData as UserData} />}
+      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[50rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
+        {loading ? <HeadshotSkeleton /> : userData && <Headshot data={userData as UserData} />}
         {loading ? (
           <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
         ) : (
