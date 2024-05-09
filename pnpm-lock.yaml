@@ -16,6 +16,9 @@ dependencies:
   '@tanstack/react-query':
     specifier: ^5.32.1
     version: 5.32.1(react@18.0.0)
+  generate-unique-id:
+    specifier: ^2.0.3
+    version: 2.0.3
   jotai:
     specifier: ^2.8.0
     version: 2.8.0(@types/react@18.0.0)(react@18.0.0)
@@ -6859,6 +6862,10 @@ packages:
   /futoin-hkdf@1.5.3:
     resolution: {integrity: sha512-SewY5KdMpaoCeh7jachEWFsh1nNlaDjNHZXWqL5IGwtpEYHTgkr2+AMCgNwKWkcc0wpSYrZfR7he4WdmHFtDxQ==}
     engines: {node: '>=8'}
+    dev: false
+
+  /generate-unique-id@2.0.3:
+    resolution: {integrity: sha512-oADhkjv6nsiHNJNa+kCe/h6vqgooEPmASHU40hWGbhDODb/xKp5ej7l+7BNs3bQ/v8DCbaVJ42//kN2umQfr6A==}
     dev: false
 
   /gensync@1.0.0-beta.2:

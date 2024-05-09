@@ -9,6 +9,7 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import { useSetAtom } from "jotai";
 import { feedAtom } from "@/store";
 import { DegenAskABI, DegenAskContract } from "@/utils/constants";
+import { parseEther } from "viem";
 
 export default function Setup({ user }: Profile) {
   const { username, address: savedAddress, price: savedPrice } = user;
@@ -30,20 +31,37 @@ export default function Setup({ user }: Profile) {
   }, [savedAddress, savedPrice]);
 
   const setProfile = () => {
-    writeContractAsync({
-      account: address,
-      address: DegenAskContract,
-      abi: DegenAskABI,
-      functionName: "createCreator",
-      args: [fees],
-    }).catch((error) => {
-      setIsLoading(false);
-      toast.error("User rejected the request", {
-        style: {
-          borderRadius: "10px",
-        },
+    if (savedPrice > 0) {
+      writeContractAsync({
+        account: address,
+        address: DegenAskContract,
+        abi: DegenAskABI,
+        functionName: "editCreatorFee",
+        args: [parseEther(String(fees))],
+      }).catch((error) => {
+        setIsLoading(false);
+        toast.error("User rejected the request", {
+          style: {
+            borderRadius: "10px",
+          },
+        });
       });
-    });
+    } else {
+      writeContractAsync({
+        account: address,
+        address: DegenAskContract,
+        abi: DegenAskABI,
+        functionName: "createCreator",
+        args: [parseEther(String(fees))],
+      }).catch((error) => {
+        setIsLoading(false);
+        toast.error("User rejected the request", {
+          style: {
+            borderRadius: "10px",
+          },
+        });
+      });
+    }
   };
 
   const store = async () => {

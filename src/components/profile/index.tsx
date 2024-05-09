@@ -83,7 +83,7 @@ export default function Profile({ user }: Profile) {
         {feed !== "feed" && (
           <div
             onClick={() => setFeed("feed")}
-            className="cursor-pointer items-center inline-flex text-sm text-neutral-700 gap-2 transition-transform duration-300 ease-in-out hover:scale-110"
+            className="cursor-pointer items-center flex flex-row w-fit text-sm text-neutral-700 gap-2 transition-transform duration-300 ease-in-out hover:scale-110"
           >
             <IoMdArrowBack size={25} />
             <div>Go Back</div>
@@ -106,7 +106,7 @@ export default function Profile({ user }: Profile) {
           {!loading && feed === "setup" ? (
             <Setup user={user} />
           ) : feed === "ask" ? (
-            <AskQuestion price={price} />
+            <AskQuestion creatorUsername={username} creatorAddress={address} price={price} />
           ) : (
             userData && <Feed user={user} />
           )}

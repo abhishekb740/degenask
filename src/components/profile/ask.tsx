@@ -2,26 +2,53 @@
 import { useEffect, useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { feedAtom } from "@/store";
 import { publicClient } from "@/utils/config";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import toast from "react-hot-toast";
-import { TokenABI, TokenContract } from "@/utils/constants";
+import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
+import generateUniqueId from "generate-unique-id";
+import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
 
 interface IAskQuestionProps {
   price: number;
+  creatorAddress: string;
+  creatorUsername: string;
 }
 
-export default function AskQuestion({ price }: IAskQuestionProps) {
-  const [balance, setBalance] = useState<string>("");
+export default function AskQuestion({ price, creatorAddress, creatorUsername }: IAskQuestionProps) {
+  const [balance, setBalance] = useState<number>();
+  const [questionId, setQuestionId] = useState<number>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [questionContent, setQuestionContent] = useState<string>();
-  const feed = useAtomValue(feedAtom);
   const setFeed = useSetAtom(feedAtom);
-
   const { address } = useAccount();
+  const { authenticated, user, createWallet } = usePrivy();
+  const { wallets } = useWallets();
+  const { data, writeContractAsync, status } = useWriteContract();
+  const {
+    data: approvalData,
+    writeContractAsync: writeApprovalContractAsync,
+    status: approvalStatus,
+  } = useWriteContract();
+  const {
+    isSuccess,
+    status: isValid,
+    isError: isTxError,
+  } = useWaitForTransactionReceipt({
+    hash: data,
+  });
+  const {
+    isSuccess: isApprovalSuccess,
+    status: isApprovalValid,
+    isError: isApprovalTxError,
+  } = useWaitForTransactionReceipt({
+    hash: approvalData,
+  });
+
   const getBalance = async () => {
     if (address) {
       try {
@@ -31,7 +58,7 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
           functionName: "balanceOf",
           args: [address],
         });
-        setBalance(formatEther(balance as bigint));
+        setBalance(Number(formatEther(balance as bigint)));
       } catch (e) {
         toast.error("Error fetching wallet balance", {
           style: {
@@ -40,13 +67,140 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
         });
       }
     } else {
-      setBalance("");
+      setBalance(0);
     }
   };
+
+  const getApproval = async () => {
+    writeApprovalContractAsync({
+      account: address,
+      address: TokenContract,
+      abi: TokenABI,
+      functionName: "approve",
+      args: [DegenAskContract, parseEther(String(price))],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
+
+  const generateQuestion = async () => {
+    const questionId = generateUniqueId({
+      length: 7,
+      useLetters: false,
+      useNumbers: true,
+    });
+    setQuestionId(Number(questionId));
+    writeContractAsync({
+      account: address,
+      address: DegenAskContract,
+      abi: DegenAskABI,
+      functionName: "askQuestion",
+      args: [Number(questionId), creatorAddress, parseEther(String(price))],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
+
+  const store = async () => {
+    const response = await fetch("/api/setQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        questionId,
+        content: questionContent,
+        creatorUsername,
+        creatorAddress,
+        authorUsername: user?.farcaster?.username,
+        authorAddress: address,
+        price,
+      }),
+    });
+    if (response.status === 200) {
+      toast.success("Saved successfully", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+    setIsLoading(false);
+    setFeed("feed");
+  };
+
+  useEffect(() => {
+    if (status === "success" && isSuccess && isValid === "success") {
+      store();
+    } else if (isTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [status, isSuccess, isValid, isTxError]);
+
+  useEffect(() => {
+    if (approvalStatus === "success" && isApprovalSuccess && isApprovalValid === "success") {
+      generateQuestion();
+    } else if (isApprovalTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [approvalStatus, isApprovalSuccess, isApprovalValid, isApprovalTxError]);
 
   useEffect(() => {
     getBalance();
   }, [address]);
+
+  const setProfile = async () => {
+    const response = await fetch("/api/setCreator", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: user?.farcaster?.username,
+        fid: user?.farcaster?.fid,
+      }),
+    });
+    if (response.status === 200) {
+      toast.success("User created successfully", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  };
+
+  const { login } = useLogin({
+    async onComplete(user) {
+      if (authenticated) {
+        if (wallets.length === 0) {
+          const res = createWallet();
+        }
+      }
+      await setProfile();
+    },
+    onError(error) {
+      console.log("🔑 🚨 Login error", { error });
+    },
+  });
   return (
     <div>
       <div className="mb-3">
@@ -118,20 +272,35 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
         </span>
       </div>
       <div>
-        <Button
-          id="button"
-          title={`Pay ${price} DEGEN`}
-          onClick={() => {
-            if (address) {
-            } else {
-              toast.error("Connect wallet to ask question", {
-                style: {
-                  borderRadius: "10px",
-                },
-              });
-            }
-          }}
-        />
+        {user?.farcaster?.username ? (
+          <Button
+            id="button"
+            title={isLoading ? "Posting question..." : `Pay ${price} DEGEN`}
+            disabled={isLoading}
+            onClick={() => {
+              if (address) {
+                if (balance && Number(balance) >= price) {
+                  setIsLoading(true);
+                  getApproval();
+                } else {
+                  toast.error("Insufficient balance", {
+                    style: {
+                      borderRadius: "10px",
+                    },
+                  });
+                }
+              } else {
+                toast.error("Connect wallet to ask question", {
+                  style: {
+                    borderRadius: "10px",
+                  },
+                });
+              }
+            }}
+          />
+        ) : (
+          <Button id="button" title="Connect Farcaster" onClick={login} />
+        )}
       </div>
     </div>
   );
