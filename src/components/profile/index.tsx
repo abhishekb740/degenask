@@ -12,6 +12,7 @@ import HeadshotSkeleton from "./skeleton/headshot";
 import AskSkeleton from "./skeleton/ask";
 import FeedSkeleton from "./skeleton/feed";
 import SetupSkeleton from "./skeleton/setup";
+import { IoMdArrowBack } from "react-icons/io";
 
 const Headshot = dynamic(() => import("@/components/profile/headshot"), {
   loading: () => <HeadshotSkeleton />,
@@ -78,6 +79,15 @@ export default function Profile({ user }: Profile) {
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
       <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[50rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
         {loading ? <HeadshotSkeleton /> : userData && <Headshot data={userData as UserData} />}
+        {feed !== "feed" && (
+          <div
+            onClick={() => setFeed("feed")}
+            className="cursor-pointer items-center inline-flex text-sm text-neutral-700 gap-2 transition-transform duration-300 ease-in-out hover:scale-110"
+          >
+            <IoMdArrowBack size={25} />
+            <div>Go Back</div>
+          </div>
+        )}
         {loading ? (
           <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
         ) : (

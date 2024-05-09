@@ -41,6 +41,7 @@ export default function Setup({ user }: Profile) {
     setIsLoading(false);
     setFeed("feed");
   };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row w-full gap-3 mb-3">

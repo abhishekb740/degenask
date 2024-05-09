@@ -2,6 +2,8 @@
 import { useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
+import { useAtomValue, useSetAtom } from "jotai";
+import { feedAtom } from "@/store";
 
 interface IAskQuestionProps {
   price: number;
@@ -9,6 +11,9 @@ interface IAskQuestionProps {
 
 export default function AskQuestion({ price }: IAskQuestionProps) {
   const [questionContent, setQuestionContent] = useState<string>();
+  const feed = useAtomValue(feedAtom);
+  const setFeed = useSetAtom(feedAtom);
+
   return (
     <div>
       <div className="mb-5">
