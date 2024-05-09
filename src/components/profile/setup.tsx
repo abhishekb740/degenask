@@ -7,7 +7,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useSetAtom } from "jotai";
 import { feedAtom } from "@/store";
-import { IoMdArrowBack } from "react-icons/io";
 
 export default function Setup({ user }: Profile) {
   const { username, address: savedAddress, price: savedPrice } = user;
@@ -43,19 +42,8 @@ export default function Setup({ user }: Profile) {
     setFeed("feed");
   };
 
-  const handleBack = () => {
-    setFeed("feed");
-  };
-
   return (
     <div>
-      <div
-        onClick={handleBack}
-        className="cursor-pointer items-center inline-flex text-sm text-neutral-700 gap-2"
-      >
-        <IoMdArrowBack size={25} />
-        <div>Go Back</div>
-      </div>
       <div className="flex flex-col sm:flex-row w-full gap-3 mb-3">
         <span className="w-full sm:w-[60%]">
           <p className="text-neutral-600 text-sm md:text-lg">Payment Address</p>
