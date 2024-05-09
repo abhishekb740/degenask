@@ -39,8 +39,7 @@ export default function Setup({ user }: Profile) {
       });
     }
     setIsLoading(false);
-    setFeed("");
-    // window.location.reload();
+    setFeed("feed");
   };
   return (
     <div>

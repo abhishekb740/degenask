@@ -1,5 +1,5 @@
-import { Profile } from "@/components";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 
 type Props = {
   params: {
@@ -33,6 +33,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
+
+const Profile = dynamic(() => import("@/components/profile"), {
+  loading: () => (
+    <div className="min-h-screen flex justify-center items-center text-xl text-neutral-700 font-medium">
+      Fetching profile...
+    </div>
+  ),
+});
 
 export default async function Creator({ params }: Props) {
   const user = await fetch(

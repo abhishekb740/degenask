@@ -11,7 +11,7 @@ export default function AskQuestion({ price }: IAskQuestionProps) {
   const [questionContent, setQuestionContent] = useState<string>();
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-5">
         <TextArea
           id="content"
           name="content"

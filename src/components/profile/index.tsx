@@ -2,16 +2,32 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import Headshot from "./headshot";
-import Setup from "./setup";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
 import type { Profile, UserData } from "@/types";
-import AskQuestion from "./ask";
 import { feedAtom } from "@/store";
 import Button from "@/components/form/button";
-import Questions from "./questions";
-// import Questions from "./questions";
+import dynamic from "next/dynamic";
+import HeadshotSkeleton from "./skeleton/headshot";
+import AskSkeleton from "./skeleton/ask";
+import FeedSkeleton from "./skeleton/feed";
+import SetupSkeleton from "./skeleton/setup";
+
+const Headshot = dynamic(() => import("@/components/profile/headshot"), {
+  loading: () => <HeadshotSkeleton />,
+});
+
+const AskQuestion = dynamic(() => import("@/components/profile/ask"), {
+  loading: () => <AskSkeleton />,
+});
+
+const Feed = dynamic(() => import("@/components/profile/feed"), {
+  loading: () => <FeedSkeleton />,
+});
+
+const Setup = dynamic(() => import("@/components/profile/setup"), {
+  loading: () => <SetupSkeleton />,
+});
 
 export default function Profile({ user }: Profile) {
   const feed = useAtomValue(feedAtom);
@@ -46,6 +62,7 @@ export default function Profile({ user }: Profile) {
         image: data.Socials.Social[0].profileImage,
         count,
       });
+      setFeed("feed");
     }
   }, [data, loading, username, count]);
 
@@ -58,24 +75,31 @@ export default function Profile({ user }: Profile) {
   }, [price, address, username]);
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center sm:pt-20 px-3 sm:px-10">
+    <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
       <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 md:h-3/5 lg:w-2/4 font-primary rounded-xl border border-neutral-400/60 shadow-xl">
         {!loading && userData && <Headshot data={userData as UserData} />}
-        {!loading && feed === "setup" ? (
-          <Setup user={user} />
-        ) : feed === "ask" ? (
-          <AskQuestion price={price} />
-        ) : username === fcUser?.farcaster?.username ? (
-          <Questions user={user} />
+        {loading ? (
+          <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
         ) : (
-          <Button
-            id="button"
-            title="Ask a question"
-            onClick={() => {
-              setFeed("ask");
-            }}
-          />
+          feed === "feed" && (
+            <Button
+              id="button"
+              title="Ask a question"
+              onClick={() => {
+                setFeed("ask");
+              }}
+            />
+          )
         )}
+        <div className="mt-2">
+          {!loading && feed === "setup" ? (
+            <Setup user={user} />
+          ) : feed === "ask" ? (
+            <AskQuestion price={price} />
+          ) : (
+            userData && <Feed user={user} />
+          )}
+        </div>
       </div>
     </div>
   );

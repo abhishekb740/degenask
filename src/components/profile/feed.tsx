@@ -1,8 +1,7 @@
 import React from "react";
 import type { Profile } from "@/types";
-import Button from "../form/button";
 
-export default function Questions({ user }: Profile) {
+export default function Feed({ user }: Profile) {
   return (
     <div>
       <div className="flex-col">
