@@ -2,7 +2,7 @@ interface User {
   username: string;
   fid: number;
   count: number;
-  address: `0x${string}`;
+  address: string;
   price: number;
 }
 

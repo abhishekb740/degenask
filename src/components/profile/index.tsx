@@ -63,17 +63,18 @@ export default function Profile({ user }: Profile) {
         image: data.Socials.Social[0].profileImage,
         count,
       });
-      setFeed("feed");
     }
   }, [data, loading, username, count]);
 
   useEffect(() => {
-    if (!address || !price) {
-      if (username === fcUser?.farcaster?.username) setFeed("setup");
+    if (address === null || price === null) {
+      if (username === fcUser?.farcaster?.username) {
+        setFeed("setup");
+      }
     } else {
-      setFeed("");
+      setFeed("feed");
     }
-  }, [price, address, username]);
+  }, [address, price]);
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">

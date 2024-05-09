@@ -99,7 +99,10 @@ export default function Headshot({ data }: IHeadshotProps) {
               Cancel
             </button>
             <button
-              onClick={logout}
+              onClick={() => {
+                logout();
+                setShowDialog(false);
+              }}
               className="w-full px-4 py-2 border border-indigo-500 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg"
             >
               Logout

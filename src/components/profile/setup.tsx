@@ -1,25 +1,52 @@
+"use client";
 import { useEffect, useState } from "react";
 import Input from "@/components/form/input";
 import toast from "react-hot-toast";
 import Button from "@/components/form/button";
 import type { Profile } from "@/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useSetAtom } from "jotai";
 import { feedAtom } from "@/store";
+import { DegenAskABI, DegenAskContract } from "@/utils/constants";
 
 export default function Setup({ user }: Profile) {
   const { username, address: savedAddress, price: savedPrice } = user;
-  const [price, setPrice] = useState<number>(0);
+  const [fees, setFees] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { address } = useAccount();
   const setFeed = useSetAtom(feedAtom);
+  const { data, writeContractAsync, status } = useWriteContract();
+  const {
+    isSuccess,
+    status: isValid,
+    isError: isTxError,
+  } = useWaitForTransactionReceipt({
+    hash: data,
+  });
 
   useEffect(() => {
-    setPrice(savedPrice);
+    setFees(savedPrice);
   }, [savedAddress, savedPrice]);
 
-  const setProfile = async () => {
+  const setProfile = () => {
+    writeContractAsync({
+      account: address,
+      address: DegenAskContract,
+      abi: DegenAskABI,
+      functionName: "createCreator",
+      args: [fees],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
+
+  const store = async () => {
     const response = await fetch("/api/setCreator", {
       method: "POST",
       headers: {
@@ -28,7 +55,7 @@ export default function Setup({ user }: Profile) {
       body: JSON.stringify({
         username,
         address,
-        price,
+        price: fees,
       }),
     });
     if (response.status === 200) {
@@ -41,6 +68,19 @@ export default function Setup({ user }: Profile) {
     setIsLoading(false);
     setFeed("feed");
   };
+
+  useEffect(() => {
+    if (status === "success" && isSuccess && isValid === "success") {
+      store();
+    } else if (isTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [status, isSuccess, isValid, isTxError]);
 
   return (
     <div>
@@ -113,8 +153,8 @@ export default function Setup({ user }: Profile) {
             label="Set your price (DEGEN)"
             placeholder="250"
             type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={fees}
+            onChange={(e) => setFees(e.target.value)}
             helper="Asker will pay you this amount"
           />
         </span>
@@ -122,7 +162,7 @@ export default function Setup({ user }: Profile) {
       <Button
         id="button"
         title={
-          isLoading ? "Saving..." : <p>Save {price > 0 && `(${(price * 0.027).toFixed(2)} USD)`}</p>
+          isLoading ? "Saving..." : <p>Save {fees > 0 && `(${(fees * 0.024).toFixed(2)} USD)`}</p>
         }
         disabled={isLoading}
         onClick={async () => {
