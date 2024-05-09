@@ -2,6 +2,9 @@
 import { useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
+import { IoArrowBackCircle } from "react-icons/io5";
+import { useAtomValue, useSetAtom } from "jotai";
+import { feedAtom } from "@/store";
 
 interface IAskQuestionProps {
   price: number;
@@ -9,8 +12,18 @@ interface IAskQuestionProps {
 
 export default function AskQuestion({ price }: IAskQuestionProps) {
   const [questionContent, setQuestionContent] = useState<string>();
+  const feed = useAtomValue(feedAtom);
+  const setFeed = useSetAtom(feedAtom);
+
+  const handleBack = () => {
+    setFeed("feed");
+  };
+
   return (
     <div>
+      <div onClick={handleBack} className="cursor-pointer">
+        <IoArrowBackCircle size={30} />
+      </div>
       <div className="mb-5">
         <TextArea
           id="content"

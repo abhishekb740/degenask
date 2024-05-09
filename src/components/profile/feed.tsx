@@ -4,7 +4,7 @@ import type { Profile } from "@/types";
 export default function Feed({ user }: Profile) {
   return (
     <div>
-      <div className="flex-col max-h-[20rem] overflow-y-scroll">
+      <div className="flex-col max-h-[20rem] overflow-y-scroll scroll-m-2 scrollbar">
         <div className="bg-[#F6F8FA] p-2 rounded-md flex-col mb-4">
           <div className="mb-4">
             How and What Resources you will suggest to build on Farcaster? What are your top
