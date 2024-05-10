@@ -24,18 +24,18 @@ const config: Config = {
       addBase({
         ".scrollbar": {
           overflowY: "auto",
-          scrollbarColor: `${theme("colors.blue.600")} ${theme("colors.blue.200")}`,
+          scrollbarColor: `${theme("colors.indigo.200")} ${theme("colors.indigo.50")}`,
           scrollbarWidth: "thin",
         },
         ".scrollbar::-webkit-scrollbar": {
-          height: "2px",
-          width: "2px",
+          height: "1px",
+          width: "1px",
         },
         ".scrollbar::-webkit-scrollbar-thumb": {
-          backgroundColor: theme("colors.blue.600"),
+          backgroundColor: theme("colors.indigo.200"),
         },
         ".scrollbar::-webkit-scrollbar-track-piece": {
-          backgroundColor: theme("colors.blue.200"),
+          backgroundColor: theme("colors.indigo.50"),
         },
       });
     }),

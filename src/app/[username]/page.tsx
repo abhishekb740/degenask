@@ -53,9 +53,18 @@ export default async function Creator({ params }: Props) {
     },
   );
   const response = await user.json();
-
-  if (response?.data[0]?.username) {
-    return <Profile user={response?.data[0]} />;
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_HOST_URL}/api/getQuestion?username=${params.username}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const questions = await data.json();
+  if (response?.data[0]?.username && questions?.data) {
+    return <Profile user={response?.data[0]} questions={questions?.data} />;
   } else {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">

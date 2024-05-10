@@ -1,60 +1,34 @@
 import React from "react";
-import type { Profile } from "@/types";
+import type { Questions } from "@/types";
+import { useRouter } from "next/navigation";
 
-export default function Feed({ user }: Profile) {
+export default function Feed({ questions }: { questions: Questions }) {
+  const router = useRouter();
   return (
     <div>
-      <div className="flex-col max-h-[20rem] overflow-y-scroll scroll-m-2 scrollbar">
-        <div className="bg-[#F6F8FA] p-2 rounded-md flex-col mb-4">
-          <div className="mb-4">
-            How and What Resources you will suggest to build on Farcaster? What are your top
-            recommended FC users i should follow to learn more?
-          </div>
-          <div className="flex gap-2 items-center mb-4">
-            <div>asked by</div>
-            <div>{user?.username}</div>
-          </div>
-          <div>Replied</div>
-        </div>
-        <div className="bg-[#F6F8FA] p-2 rounded-md flex-col mb-4">
-          <div className="mb-4">
-            How and What Resources you will suggest to build on Farcaster? What are your top
-            recommended FC users i should follow to learn more?
-          </div>
-          <div className="flex gap-2 items-center mb-4">
-            <div>asked by</div>
-            <div>{user?.username}</div>
-          </div>
-          <div>
-            <button>Answer</button>
-          </div>
-        </div>
-        <div className="bg-[#F6F8FA] p-2 rounded-md flex-col mb-4">
-          <div className="mb-4">
-            How and What Resources you will suggest to build on Farcaster? What are your top
-            recommended FC users i should follow to learn more?
-          </div>
-          <div className="flex gap-2 items-center mb-4">
-            <div>asked by</div>
-            <div>{user?.username}</div>
-          </div>
-          <div>
-            <button>Answer</button>
-          </div>
-        </div>
-        <div className="bg-[#F6F8FA] p-2 rounded-md flex-col mb-4">
-          <div className="mb-4">
-            How and What Resources you will suggest to build on Farcaster? What are your top
-            recommended FC users i should follow to learn more?
-          </div>
-          <div className="flex gap-2 items-center mb-4">
-            <div>asked by</div>
-            <div>{user?.username}</div>
-          </div>
-          <div>
-            <button>Answer</button>
-          </div>
-        </div>
+      <div className="flex flex-col p-2 max-h-[30rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
+        {questions.length > 0
+          ? questions?.map((question) => (
+              <div
+                key={question.questionId}
+                className="bg-neutral-200 p-5 rounded-lg flex flex-col hover:cursor-pointer hover:shadow-lg"
+                onClick={() => {
+                  router.push(`/${question.creatorUsername}/${question.questionId}`);
+                }}
+              >
+                <p className="mb-2 text-neutral-800">{question?.content}</p>
+                <span className="flex flex-row items-center justify-between">
+                  <div className="flex flex-row text-sm gap-1 items-center">
+                    asked by
+                    <p className="text-indigo-500 font-medium">{question?.authorUsername}</p>
+                  </div>
+                  <p className="text-sm text-neutral-700">
+                    {question?.isAnswered ? "Answered" : "Not Answered"}
+                  </p>
+                </span>
+              </div>
+            ))
+          : null}
       </div>
     </div>
   );

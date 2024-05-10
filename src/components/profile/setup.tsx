@@ -7,16 +7,17 @@ import type { Profile } from "@/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useSetAtom } from "jotai";
-import { feedAtom } from "@/store";
+import { feedAtom, userAtom } from "@/store";
 import { DegenAskABI, DegenAskContract } from "@/utils/constants";
 import { parseEther } from "viem";
 
 export default function Setup({ user }: Profile) {
-  const { username, address: savedAddress, price: savedPrice } = user;
+  const { username, address: savedAddress, price: savedPrice, count, fid } = user;
   const [fees, setFees] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { address } = useAccount();
   const setFeed = useSetAtom(feedAtom);
+  const setUser = useSetAtom(userAtom);
   const { data, writeContractAsync, status } = useWriteContract();
   const {
     isSuccess,
@@ -82,9 +83,18 @@ export default function Setup({ user }: Profile) {
           borderRadius: "10px",
         },
       });
+      setUser({
+        user: {
+          username,
+          address: String(address),
+          price: fees,
+          count,
+          fid,
+        },
+      });
+      setFeed("feed");
     }
     setIsLoading(false);
-    setFeed("feed");
   };
 
   useEffect(() => {
