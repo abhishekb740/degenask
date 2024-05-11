@@ -16,6 +16,9 @@ dependencies:
   '@tanstack/react-query':
     specifier: ^5.32.1
     version: 5.32.1(react@18.0.0)
+  '@vercel/analytics':
+    specifier: ^1.2.2
+    version: 1.2.2(next@14.2.3)(react@18.0.0)
   generate-unique-id:
     specifier: ^2.0.3
     version: 2.0.3
@@ -3847,6 +3850,22 @@ packages:
       '@vanilla-extract/css': ^1.0.0
     dependencies:
       '@vanilla-extract/css': 1.14.0
+    dev: false
+
+  /@vercel/analytics@1.2.2(next@14.2.3)(react@18.0.0):
+    resolution: {integrity: sha512-X0rctVWkQV1e5Y300ehVNqpOfSOufo7ieA5PIdna8yX/U7Vjz0GFsGf4qvAhxV02uQ2CVt7GYcrFfddXXK2Y4A==}
+    peerDependencies:
+      next: '>= 13'
+      react: ^18 || ^19
+    peerDependenciesMeta:
+      next:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      next: 14.2.3(@babel/core@7.24.5)(react-dom@18.0.0)(react@18.0.0)
+      react: 18.0.0
+      server-only: 0.0.1
     dev: false
 
   /@wagmi/connectors@5.0.0(@types/react@18.0.0)(@wagmi/core@2.9.0)(react-dom@18.0.0)(react-native@0.74.1)(react@18.0.0)(typescript@5.0.2)(viem@2.9.31):
@@ -10232,6 +10251,10 @@ packages:
       send: 0.18.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /server-only@0.0.1:
+    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
     dev: false
 
   /set-blocking@2.0.0:

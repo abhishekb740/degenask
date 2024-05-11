@@ -3,6 +3,7 @@ import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "DegenAsk",
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="h-screen bg-gradient-radial from-[#80e5f7] via-[#2dd1fe] to-[#06acff]">
         <Providers>{children}</Providers>
+        <Analytics />
         <Toaster />
       </body>
     </html>
