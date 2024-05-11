@@ -66,24 +66,24 @@ export default function Headshot({ data }: IHeadshotProps) {
           <FiCopy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </span>
         {user?.farcaster?.username === username && (
-          <div>
-            <span
-              onClick={() => {
-                setFeed("setup");
-              }}
-              className="absolute right-[6.8rem] bg-indigo-100 hover:bg-indigo-200 hover:text-indigo-800 p-2.5 rounded-full cursor-pointer"
-            >
-              <FaRegEdit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </span>
-            <span
-              onClick={() => {
-                setShowDialog(true);
-              }}
-              className="absolute right-[4rem] bg-red-100 hover:bg-red-200 hover:text-red-600 p-2.5 rounded-full cursor-pointer"
-            >
-              <FiLogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </span>{" "}
-          </div>
+          <span
+            onClick={() => {
+              setFeed("setup");
+            }}
+            className="absolute right-[6.8rem] bg-indigo-100 hover:bg-indigo-200 hover:text-indigo-800 p-2.5 rounded-full cursor-pointer"
+          >
+            <FaRegEdit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </span>
+        )}
+        {user?.farcaster?.username && (
+          <span
+            onClick={() => {
+              setShowDialog(true);
+            }}
+            className="absolute right-[4rem] bg-red-100 hover:bg-red-200 hover:text-red-600 p-2.5 rounded-full cursor-pointer"
+          >
+            <FiLogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </span>
         )}
       </div>
       <Dialog isEnabled={showDialog} setOutsideClick={setShowDialog}>
@@ -99,7 +99,10 @@ export default function Headshot({ data }: IHeadshotProps) {
               Cancel
             </button>
             <button
-              onClick={logout}
+              onClick={() => {
+                logout();
+                setShowDialog(false);
+              }}
               className="w-full px-4 py-2 border border-indigo-500 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg"
             >
               Logout
