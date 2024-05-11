@@ -14,6 +14,7 @@ import AskSkeleton from "./skeleton/ask";
 import FeedSkeleton from "./skeleton/feed";
 import SetupSkeleton from "./skeleton/setup";
 import { IoMdArrowBack } from "react-icons/io";
+import FarcasterIcon from "@/icons/farcaster";
 
 const Headshot = dynamic(() => import("@/components/profile/headshot"), {
   loading: () => <HeadshotSkeleton />,
@@ -121,10 +122,14 @@ export default function Profile({
           ) : (
             <Button
               id="button"
-              title="Share it on Warpcast"
+              title={
+                <p className="flex flex-row gap-5 justify-center items-center">
+                  <FarcasterIcon className="w-5 h-5" color="#ffffff" /> Share your profile
+                </p>
+              }
               onClick={() => {
                 window.open(
-                  `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me%20and%20earn%20$DEGEN%20for%20your%20questions!%0Ahttps://degenask.vercel.app/${username}`,
+                  `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me%20and%20earn%20$DEGEN%20for%20your%20questions!%0A&embeds[]=${process.env.NEXT_PUBLIC_HOST_URL}/${username}/`,
                 );
               }}
             />
