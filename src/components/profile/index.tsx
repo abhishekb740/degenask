@@ -109,7 +109,8 @@ export default function Profile({
         {loading ? (
           <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
         ) : (
-          feed === "feed" && (
+          feed === "feed" &&
+          (fcUser?.farcaster?.username !== username ? (
             <Button
               id="button"
               title="Ask a question"
@@ -117,7 +118,17 @@ export default function Profile({
                 setFeed("ask");
               }}
             />
-          )
+          ) : (
+            <Button
+              id="button"
+              title="Share it on Warpcast"
+              onClick={() => {
+                window.open(
+                  `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me%20and%20earn%20$DEGEN%20for%20your%20questions!%0Ahttps://degenask.vercel.app/${username}`,
+                );
+              }}
+            />
+          ))
         )}
         <div className="mt-2">
           {!loading && feed === "setup" ? (
