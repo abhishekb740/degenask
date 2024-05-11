@@ -8,9 +8,19 @@ interface ITextarea {
   onChange: (e: any) => void;
   value?: string | number;
   helper?: string;
+  disabled?: boolean;
 }
 
-const TextArea = ({ id, name, label, placeholder, onChange, value, helper }: ITextarea) => {
+const TextArea = ({
+  id,
+  name,
+  label,
+  placeholder,
+  onChange,
+  value,
+  helper,
+  disabled,
+}: ITextarea) => {
   return (
     <div>
       <label
@@ -24,9 +34,10 @@ const TextArea = ({ id, name, label, placeholder, onChange, value, helper }: ITe
         id={id}
         name={name}
         onChange={onChange}
-        className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm placeholder:text-neutral-500 rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5"
+        className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm placeholder:text-neutral-500 rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5 disabled:cursor-not-allowed"
         placeholder={placeholder}
         value={value}
+        disabled={disabled}
         required
       />
       <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>

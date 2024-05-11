@@ -25,7 +25,9 @@ const Button = ({ id, label, title, helper, onClick, disabled }: IButton) => {
         className="bg-indigo-500 hover:bg-indigo-600 text-white p-2.5 rounded-lg w-full disabled:cursor-progress"
         disabled={disabled}
       >
-        <div className="font-medium font-primary text-sm md:text-md lg:text-lg">{title}</div>
+        <div className="font-medium font-primary text-sm md:text-md lg:text-lg justify-center">
+          {title}
+        </div>
       </button>
       <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>
     </div>

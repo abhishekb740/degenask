@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+const plugin = require("tailwindcss/plugin");
 
 const config: Config = {
   content: [
@@ -18,6 +19,26 @@ const config: Config = {
       primary: ["Roobert"],
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addBase, theme }: { addBase: any; theme: any }) => {
+      addBase({
+        ".scrollbar": {
+          overflowY: "auto",
+          scrollbarColor: `${theme("colors.indigo.200")} ${theme("colors.indigo.50")}`,
+          scrollbarWidth: "thin",
+        },
+        ".scrollbar::-webkit-scrollbar": {
+          height: "1px",
+          width: "1px",
+        },
+        ".scrollbar::-webkit-scrollbar-thumb": {
+          backgroundColor: theme("colors.indigo.200"),
+        },
+        ".scrollbar::-webkit-scrollbar-track-piece": {
+          backgroundColor: theme("colors.indigo.50"),
+        },
+      });
+    }),
+  ],
 };
 export default config;

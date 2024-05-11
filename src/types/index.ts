@@ -1,14 +1,28 @@
-interface User {
+export interface User {
   username: string;
   fid: number;
   count: number;
-  address: `0x${string}`;
+  address: string;
   price: number;
 }
 
 export interface Profile {
   user: User;
 }
+
+export interface Question {
+  questionId: string;
+  content: string;
+  creatorUsername: string;
+  authorUsername: string;
+  price: number;
+  createdAt: string;
+  creatorAddress: string;
+  authorAddress: string;
+  isAnswered: boolean;
+}
+
+export type Questions = Question[];
 
 export interface UserData {
   username: string;
@@ -17,4 +31,12 @@ export interface UserData {
   followers: number;
   image: string;
   count: number;
+}
+
+export interface Answer {
+  answerId: string;
+  questionId: string;
+  content: string;
+  creatorUsername: string;
+  createdAt: string;
 }
