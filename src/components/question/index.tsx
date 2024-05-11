@@ -220,7 +220,7 @@ export default function Questions({ question }: { question: Question }) {
             </p>
           </span>
         </div>
-        {answer && address === question.authorAddress ? (
+        {answer && (address === question.authorAddress || question.creatorAddress) ? (
           <div className="bg-neutral-200 p-5 rounded-lg flex flex-col ml-8 my-3">
             <p className="mb-2 text-neutral-800">{answer.content}</p>
             <span className="flex flex-row items-center justify-between">
@@ -234,7 +234,7 @@ export default function Questions({ question }: { question: Question }) {
         ) : (
           answer && (
             <div className="relative bg-neutral-200 p-5 rounded-lg flex flex-col ml-8 my-3">
-              <p className="mb-2 blur text-neutral-800">
+              <p className="mb-2 blur select-none text-neutral-800">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro facilis praesentium
                 minima natus fugiat nobis quidem suscipit, vel recusandae deserunt cupiditate!
               </p>

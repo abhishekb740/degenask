@@ -11,7 +11,6 @@ export const fetchCache = "force-no-store";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const username = params.username;
-
   return {
     title: `${username} | DegenAsk`,
     icons: "/favicon.png",
