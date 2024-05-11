@@ -124,6 +124,7 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
         creatorAddress,
         authorUsername: user?.farcaster?.username,
         authorAddress: address,
+        isAnswered: false,
         price,
       }),
     });

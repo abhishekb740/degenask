@@ -18,14 +18,14 @@ export async function POST(req: NextRequest) {
     const existingQuestion = await client
       .from("farstackQuestions")
       .select("*")
-      .eq("question_id", questionId);
+      .eq("questionId", questionId);
     if (existingQuestion?.data?.length) {
       const response = await client
         .from("farstackQuestions")
         .update({
           isAnswered,
         })
-        .eq("question_id", questionId);
+        .eq("questionId", questionId);
       if (response.error) {
         return NextResponse.json({ code: "failure", response });
       }
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
         authorUsername,
         authorAddress,
         price,
+        isAnswered,
       });
       if (response.error) {
         return NextResponse.json({ code: "failure", response });

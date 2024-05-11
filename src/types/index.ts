@@ -32,3 +32,11 @@ export interface UserData {
   image: string;
   count: number;
 }
+
+export interface Answer {
+  answerId: string;
+  questionId: string;
+  content: string;
+  creatorUsername: string;
+  createdAt: string;
+}

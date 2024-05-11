@@ -6,12 +6,12 @@ export default function Feed({ questions }: { questions: Questions }) {
   const router = useRouter();
   return (
     <div>
-      <div className="flex flex-col p-2 max-h-[30rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
+      <div className="flex flex-col max-h-[30rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
         {questions.length > 0
           ? questions?.map((question) => (
               <div
                 key={question.questionId}
-                className="bg-neutral-200 p-5 rounded-lg flex flex-col hover:cursor-pointer hover:shadow-lg"
+                className="bg-neutral-100 p-5 my-1.5 rounded-xl flex flex-col border border-neutral-100 hover:cursor-pointer hover:shadow-lg hover:border-neutral-300"
                 onClick={() => {
                   router.push(`/${question.creatorUsername}/${question.questionId}`);
                 }}

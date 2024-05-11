@@ -1,14 +1,156 @@
 "use client";
-import { useState } from "react";
-import type { Question } from "@/types";
+import { useEffect, useState } from "react";
+import type { Answer, Question } from "@/types";
 import Button from "@/components/form/button";
 import { IoMdArrowBack } from "react-icons/io";
 import TextArea from "../form/textarea";
 import { useRouter } from "next/navigation";
+import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
+import toast from "react-hot-toast";
+import { calculateDeadline, getDate } from "@/utils/helper";
+import { publicClient, walletClient, account } from "@/utils/config";
+import { DegenAskABI, DegenAskContract } from "@/utils/constants";
+import generateUniqueId from "generate-unique-id";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAtomValue, useSetAtom } from "jotai";
+import { userAtom } from "@/store";
 
 export default function Questions({ question }: { question: Question }) {
   const [answerContent, setAnswerContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [answer, setAnswer] = useState<Answer>();
   const router = useRouter();
+  const profile = useAtomValue(userAtom);
+  const setProfile = useSetAtom(userAtom);
+  const { wallets } = useWallets();
+  const { address } = useAccount();
+  const { authenticated, user, createWallet } = usePrivy();
+
+  const updateUser = async () => {
+    const count = profile.user.count + 1;
+    const response = await fetch("/api/setCreator", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: profile.user.username,
+        count,
+      }),
+    });
+    if (response.status === 200) {
+      toast.success("Saved successfully", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+      setProfile({
+        user: {
+          username: profile.user.username,
+          address: profile.user.address,
+          price: profile.user.price,
+          count: profile.user.count + 1,
+          fid: profile.user.fid,
+        },
+      });
+    }
+    setIsLoading(false);
+  };
+
+  const store = async () => {
+    const answerId = generateUniqueId({
+      length: 7,
+      useLetters: false,
+      useNumbers: true,
+    });
+    const response = await fetch("/api/setAnswer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        answerId,
+        questionId: question.questionId,
+        content: answerContent,
+        creatorUsername: question.creatorUsername,
+      }),
+    });
+    if (response.status === 200) {
+      const questionResponse = await fetch("/api/setQuestion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questionId: question.questionId,
+          isAnswered: true,
+        }),
+      });
+      if (questionResponse.status === 200) {
+        updateUser();
+      }
+    }
+    fetchAnswer();
+  };
+
+  const submitAnswer = async () => {
+    const questionId = question.questionId;
+    try {
+      const { request }: any = await publicClient.simulateContract({
+        account,
+        address: DegenAskContract,
+        abi: DegenAskABI,
+        functionName: "answerQuestion",
+        args: [questionId],
+      });
+      const transaction = await walletClient.writeContract(request);
+      if (transaction) {
+        store();
+      }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      toast.error("An error occurred while submitting your answer. Please try again.", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  };
+
+  const { login } = useLogin({
+    async onComplete(user) {
+      if (authenticated) {
+        if (wallets.length === 0) {
+          const res = createWallet();
+        }
+      }
+    },
+    onError(error) {
+      console.log("🔑 🚨 Login error", { error });
+    },
+  });
+
+  const fetchAnswer = async () => {
+    const answer = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST_URL}/api/getAnswer?questionId=${question.questionId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    const response = await answer.json();
+    if (response?.data[0]) setAnswer(response?.data[0]);
+  };
+
+  useEffect(() => {
+    if (question.isAnswered) {
+      fetchAnswer();
+    }
+  }, [question.isAnswered]);
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
@@ -22,10 +164,7 @@ export default function Questions({ question }: { question: Question }) {
           <IoMdArrowBack size={25} />
           <div>Go Back</div>
         </div>
-        <div
-          key={question.questionId}
-          className="bg-neutral-200 p-5 rounded-lg flex flex-col mt-3 mb-6"
-        >
+        <div key={question.questionId} className="bg-neutral-100 p-5 rounded-lg flex flex-col my-3">
           <p className="mb-2 text-neutral-800">{question.content}</p>
           <span className="flex flex-row items-center justify-between">
             <div className="flex flex-row text-sm gap-1 items-center">
@@ -33,23 +172,137 @@ export default function Questions({ question }: { question: Question }) {
               <p className="text-indigo-500 font-medium">{question.authorUsername}</p>
             </div>
             <p className="text-sm text-neutral-700">
-              {question.isAnswered ? "Answered" : "Not Answered"}
+              {question.isAnswered ? "Answered" : `${calculateDeadline(question.createdAt)}`}
             </p>
           </span>
         </div>
-        <div className="mb-4">
-          <TextArea
-            id="content"
-            name="content"
-            label="Answer this question"
-            placeholder="Hey anon!"
-            value={answerContent}
-            onChange={(e) => setAnswerContent(e.target.value)}
-          />
-        </div>
-        <div className="">
-          <Button id="button" title="Submit" />
-        </div>
+        {answer && address === question.authorAddress ? (
+          <div className="bg-neutral-200 p-5 rounded-lg flex flex-col ml-8 my-3">
+            <p className="mb-2 text-neutral-800">{answer.content}</p>
+            <span className="flex flex-row items-center justify-between">
+              <div className="flex flex-row text-sm gap-1 items-center">
+                answered by
+                <p className="text-indigo-500 font-medium">{answer.creatorUsername}</p>
+              </div>
+              <p className="text-sm text-neutral-700">{getDate(answer.createdAt)}</p>
+            </span>
+          </div>
+        ) : (
+          answer && (
+            <div className="relative bg-neutral-200 p-5 rounded-lg flex flex-col ml-8 my-3">
+              <p className="mb-2 blur text-neutral-800">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro facilis praesentium
+                minima natus fugiat nobis quidem suscipit, vel recusandae deserunt cupiditate!
+              </p>
+              <p className="absolute items-center justify-center">
+                Unlock this answer by connecting your wallet
+              </p>
+              <span className="flex flex-row items-center justify-between">
+                <div className="flex flex-row text-sm gap-1 items-center">
+                  answered by
+                  <p className="text-indigo-500 font-medium">{answer.creatorUsername}</p>
+                </div>
+                <p className="text-sm text-neutral-700">{getDate(answer.createdAt)}</p>
+              </span>
+            </div>
+          )
+        )}
+        {!question.isAnswered ? (
+          <div>
+            <div className="my-3">
+              <TextArea
+                id="content"
+                name="content"
+                label="Answer this question"
+                placeholder="Hey anon!"
+                value={answerContent}
+                onChange={(e) => setAnswerContent(e.target.value)}
+                disabled={user?.farcaster?.username !== question.creatorUsername}
+              />
+            </div>
+            {user?.farcaster?.username ? (
+              user?.farcaster?.username === question.creatorUsername ? (
+                <Button
+                  id="button"
+                  title={isLoading ? "Posting answer..." : "Submit"}
+                  disabled={isLoading}
+                  onClick={() => {
+                    if (answerContent) {
+                      setIsLoading(true);
+                      submitAnswer();
+                    } else {
+                      toast.error("Please enter an answer", {
+                        style: {
+                          borderRadius: "10px",
+                        },
+                      });
+                    }
+                  }}
+                />
+              ) : (
+                <Button id="button" title="You're not creator of this account." />
+              )
+            ) : (
+              <Button id="button" title="Connect Farcaster" onClick={login} />
+            )}
+          </div>
+        ) : (
+          <ConnectButton.Custom>
+            {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
+              const ready = mounted;
+              const connected = ready && account && chain;
+
+              return (
+                <div
+                  {...(!ready && {
+                    "aria-hidden": true,
+                    style: {
+                      opacity: 0,
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    },
+                  })}
+                >
+                  {(() => {
+                    if (!connected) {
+                      return (
+                        <button
+                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
+                          onClick={openConnectModal}
+                          type="button"
+                        >
+                          Connect Wallet
+                        </button>
+                      );
+                    }
+                    if (chain.unsupported) {
+                      return (
+                        <button
+                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
+                          onClick={openChainModal}
+                          type="button"
+                        >
+                          Wrong network
+                        </button>
+                      );
+                    }
+                    return (
+                      <div style={{ display: "flex", gap: 12 }}>
+                        <button
+                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
+                          onClick={openAccountModal}
+                          type="button"
+                        >
+                          {account.displayName}
+                        </button>
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            }}
+          </ConnectButton.Custom>
+        )}
       </div>
     </div>
   );
