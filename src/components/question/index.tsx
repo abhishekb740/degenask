@@ -11,8 +11,7 @@ import { calculateDeadline, getDate } from "@/utils/helper";
 import { publicClient, walletClient, account } from "@/utils/config";
 import { DegenAskABI, DegenAskContract } from "@/utils/constants";
 import generateUniqueId from "generate-unique-id";
-import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useAtomValue, useSetAtom } from "jotai";
 import { userAtom } from "@/store";
 import Connect from "../shared/connect";
@@ -27,6 +26,32 @@ export default function Questions({ question }: { question: Question }) {
   const { wallets } = useWallets();
   const { address } = useAccount();
   const { authenticated, user, createWallet } = usePrivy();
+  const { data, writeContractAsync, status } = useWriteContract();
+  const {
+    isSuccess,
+    status: isValid,
+    isError: isTxError,
+  } = useWaitForTransactionReceipt({
+    hash: data,
+  });
+
+  const claimRefund = () => {
+    setIsLoading(true);
+    writeContractAsync({
+      account: address,
+      address: DegenAskContract,
+      abi: DegenAskABI,
+      functionName: "refundPayment",
+      args: [question.questionId],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
 
   const updateUser = async () => {
     const count = profile.user.count + 1;
@@ -153,6 +178,24 @@ export default function Questions({ question }: { question: Question }) {
     }
   }, [question.isAnswered]);
 
+  useEffect(() => {
+    if (status === "success" && isSuccess && isValid === "success") {
+      setIsLoading(false);
+      toast.success("Refund processed successfully", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    } else if (isTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [status, isSuccess, isValid, isTxError]);
+
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
       <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[50rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
@@ -249,6 +292,25 @@ export default function Questions({ question }: { question: Question }) {
           </div>
         ) : (
           <Connect padding="mt-2 p-2.5" />
+        )}
+        {calculateDeadline(question.createdAt) === "Expired" && address ? (
+          <Button
+            id="button"
+            title={isLoading ? "Processing refund..." : "Claim Refund"}
+            onClick={() => {
+              if (address === question.authorAddress) {
+                claimRefund();
+              } else {
+                toast.error("This address doesn't belong to author", {
+                  style: {
+                    borderRadius: "10px",
+                  },
+                });
+              }
+            }}
+          />
+        ) : (
+          calculateDeadline(question.createdAt) === "Expired" && <Connect padding="mt-2 p-2.5" />
         )}
       </div>
     </div>
