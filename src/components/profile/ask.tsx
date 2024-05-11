@@ -242,11 +242,19 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
             disabled={isLoading}
             onClick={() => {
               if (address) {
-                if (balance && Number(balance) >= price) {
-                  setIsLoading(true);
-                  getApproval();
+                if (questionContent) {
+                  if (balance && Number(balance) >= price) {
+                    setIsLoading(true);
+                    getApproval();
+                  } else {
+                    toast.error("Insufficient balance", {
+                      style: {
+                        borderRadius: "10px",
+                      },
+                    });
+                  }
                 } else {
-                  toast.error("Insufficient balance", {
+                  toast.error("Please ask your question", {
                     style: {
                       borderRadius: "10px",
                     },
