@@ -4,12 +4,12 @@ import Input from "@/components/form/input";
 import toast from "react-hot-toast";
 import Button from "@/components/form/button";
 import type { Profile } from "@/types";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useSetAtom } from "jotai";
 import { feedAtom, userAtom } from "@/store";
 import { DegenAskABI, DegenAskContract } from "@/utils/constants";
 import { parseEther } from "viem";
+import Connect from "../shared/connect";
 
 export default function Setup({ user }: Profile) {
   const { username, address: savedAddress, price: savedPrice, count, fid } = user;
@@ -115,61 +115,7 @@ export default function Setup({ user }: Profile) {
       <div className="flex flex-col sm:flex-row w-full gap-3 mb-3">
         <span className="w-full sm:w-[60%]">
           <p className="text-neutral-600 text-sm md:text-lg">Payment Address</p>
-          <ConnectButton.Custom>
-            {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
-              const ready = mounted;
-              const connected = ready && account && chain;
-
-              return (
-                <div
-                  {...(!ready && {
-                    "aria-hidden": true,
-                    style: {
-                      opacity: 0,
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    },
-                  })}
-                >
-                  {(() => {
-                    if (!connected) {
-                      return (
-                        <button
-                          className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5"
-                          onClick={openConnectModal}
-                          type="button"
-                        >
-                          Connect Wallet
-                        </button>
-                      );
-                    }
-                    if (chain.unsupported) {
-                      return (
-                        <button
-                          className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5"
-                          onClick={openChainModal}
-                          type="button"
-                        >
-                          Wrong network
-                        </button>
-                      );
-                    }
-                    return (
-                      <div style={{ display: "flex", gap: 12 }}>
-                        <button
-                          className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5"
-                          onClick={openAccountModal}
-                          type="button"
-                        >
-                          {account.displayName}
-                        </button>
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            }}
-          </ConnectButton.Custom>
+          <Connect padding="mt-2 p-2.5" />
           <div className="text-sm mt-1 font-primary text-neutral-400">
             You will receive payment on this address
           </div>

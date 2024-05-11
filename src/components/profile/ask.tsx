@@ -8,10 +8,10 @@ import { publicClient } from "@/utils/config";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import toast from "react-hot-toast";
 import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { formatEther, parseEther } from "viem";
 import generateUniqueId from "generate-unique-id";
 import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
+import Connect from "../shared/connect";
 
 interface IAskQuestionProps {
   price: number;
@@ -215,61 +215,7 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
         />
         <span className="flex flex-row justify-between items-center">
           <p className="text-indigo-500">Balance: {balance ? balance : 0}</p>
-          <ConnectButton.Custom>
-            {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
-              const ready = mounted;
-              const connected = ready && account && chain;
-
-              return (
-                <div
-                  {...(!ready && {
-                    "aria-hidden": true,
-                    style: {
-                      opacity: 0,
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    },
-                  })}
-                >
-                  {(() => {
-                    if (!connected) {
-                      return (
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openConnectModal}
-                          type="button"
-                        >
-                          Connect Wallet
-                        </button>
-                      );
-                    }
-                    if (chain.unsupported) {
-                      return (
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openChainModal}
-                          type="button"
-                        >
-                          Wrong network
-                        </button>
-                      );
-                    }
-                    return (
-                      <div style={{ display: "flex", gap: 12 }}>
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openAccountModal}
-                          type="button"
-                        >
-                          {account.displayName}
-                        </button>
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            }}
-          </ConnectButton.Custom>
+          <Connect padding="mt-1 p-2" />
         </span>
       </div>
       <div>

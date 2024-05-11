@@ -15,6 +15,7 @@ import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAtomValue, useSetAtom } from "jotai";
 import { userAtom } from "@/store";
+import Connect from "../shared/connect";
 
 export default function Questions({ question }: { question: Question }) {
   const [answerContent, setAnswerContent] = useState<string>("");
@@ -247,61 +248,7 @@ export default function Questions({ question }: { question: Question }) {
             )}
           </div>
         ) : (
-          <ConnectButton.Custom>
-            {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
-              const ready = mounted;
-              const connected = ready && account && chain;
-
-              return (
-                <div
-                  {...(!ready && {
-                    "aria-hidden": true,
-                    style: {
-                      opacity: 0,
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    },
-                  })}
-                >
-                  {(() => {
-                    if (!connected) {
-                      return (
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openConnectModal}
-                          type="button"
-                        >
-                          Connect Wallet
-                        </button>
-                      );
-                    }
-                    if (chain.unsupported) {
-                      return (
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openChainModal}
-                          type="button"
-                        >
-                          Wrong network
-                        </button>
-                      );
-                    }
-                    return (
-                      <div style={{ display: "flex", gap: 12 }}>
-                        <button
-                          className="mt-1 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2"
-                          onClick={openAccountModal}
-                          type="button"
-                        >
-                          {account.displayName}
-                        </button>
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            }}
-          </ConnectButton.Custom>
+          <Connect padding="mt-2 p-2.5" />
         )}
       </div>
     </div>
