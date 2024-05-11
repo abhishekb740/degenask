@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
-import { useSetAtom } from "jotai";
-import { feedAtom } from "@/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { feedAtom, questionsAtom } from "@/store";
 import { publicClient } from "@/utils/config";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import toast from "react-hot-toast";
@@ -12,6 +13,7 @@ import { formatEther, parseEther } from "viem";
 import generateUniqueId from "generate-unique-id";
 import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
 import Connect from "../shared/connect";
+import { Question } from "@/types";
 
 interface IAskQuestionProps {
   price: number;
@@ -21,10 +23,12 @@ interface IAskQuestionProps {
 
 export default function AskQuestion({ price, creatorAddress, creatorUsername }: IAskQuestionProps) {
   const [balance, setBalance] = useState<number>();
-  const [questionId, setQuestionId] = useState<number>();
+  const [questionId, setQuestionId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [questionContent, setQuestionContent] = useState<string>();
+  const [questionContent, setQuestionContent] = useState<string>("");
   const setFeed = useSetAtom(feedAtom);
+  const questionsData = useAtomValue(questionsAtom);
+  const setQuestions = useSetAtom(questionsAtom);
   const { address } = useAccount();
   const { authenticated, user, createWallet } = usePrivy();
   const { wallets } = useWallets();
@@ -94,7 +98,7 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
       useLetters: false,
       useNumbers: true,
     });
-    setQuestionId(Number(questionId));
+    setQuestionId(questionId);
     writeContractAsync({
       account: address,
       address: DegenAskContract,
@@ -136,6 +140,18 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
       });
     }
     setIsLoading(false);
+    const question: Question = {
+      questionId,
+      content: questionContent,
+      creatorUsername,
+      authorUsername: user?.farcaster?.username ?? "",
+      price,
+      createdAt: new Date().toISOString(),
+      creatorAddress,
+      authorAddress: address as string,
+      isAnswered: false,
+    };
+    setQuestions([...questionsData, question]);
     setFeed("feed");
   };
 

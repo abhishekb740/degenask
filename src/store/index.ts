@@ -1,4 +1,4 @@
-import { Profile, UserData } from "@/types";
+import { Profile, Questions, UserData } from "@/types";
 import { atom } from "jotai";
 
 export const feedAtom = atom<string>("");
@@ -21,3 +21,5 @@ export const headshotAtom = atom<UserData>({
   image: "",
   count: 0,
 });
+
+export const questionsAtom = atom<Questions>([]);

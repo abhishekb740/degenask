@@ -6,7 +6,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
 import type { Profile, Questions, User } from "@/types";
-import { feedAtom, headshotAtom, userAtom } from "@/store";
+import { feedAtom, headshotAtom, questionsAtom, userAtom } from "@/store";
 import Button from "@/components/form/button";
 import dynamic from "next/dynamic";
 import HeadshotSkeleton from "./skeleton/headshot";
@@ -44,6 +44,8 @@ export default function Profile({
   const setUser = useSetAtom(userAtom);
   const headshotData = useAtomValue(headshotAtom);
   const setHeadshot = useSetAtom(headshotAtom);
+  const questionsData = useAtomValue(questionsAtom);
+  const setQuestions = useSetAtom(questionsAtom);
   const { username, address, price, count } = profile;
   const { user: fcUser } = usePrivy();
 
@@ -88,7 +90,8 @@ export default function Profile({
 
   useEffect(() => {
     setUser({ user: profile });
-  }, [profile]);
+    setQuestions(questions);
+  }, [profile, questions]);
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
@@ -126,7 +129,7 @@ export default function Profile({
               price={profileData.user.price}
             />
           ) : (
-            headshotData && <Feed questions={questions} />
+            headshotData && <Feed questions={questionsData} />
           )}
         </div>
       </div>
