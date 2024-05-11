@@ -13,18 +13,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://degenask.vercel.app/",
+    url: process.env.NEXT_PUBLIC_HOST_URL,
     title: "DegenAsk",
     description:
       "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
-    images: [
-      {
-        url: "/metadata.png",
-        width: 800,
-        height: 600,
-        alt: "DegenAsk",
-      },
-    ],
+    images: {
+      url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.png`,
+      alt: "DegenAsk",
+    },
   },
 };
 

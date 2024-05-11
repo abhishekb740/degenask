@@ -19,16 +19,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://degenask.me",
+      url: process.env.NEXT_PUBLIC_HOST_URL,
       siteName: "DegenAsk",
-      images: [
-        {
-          url: "/metadata.png",
-          width: 800,
-          height: 600,
-          alt: "DegenAsk",
-        },
-      ],
+      images: {
+        url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.png`,
+        alt: "DegenAsk",
+      },
     },
   };
 }
