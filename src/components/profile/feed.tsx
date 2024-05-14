@@ -6,7 +6,7 @@ export default function Feed({ questions }: { questions: Questions }) {
   const router = useRouter();
   return (
     <div>
-      <div className="flex flex-col max-h-[30rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
+      <div className="flex flex-col max-h-[20rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
         {questions.length > 0
           ? questions?.map((question) => (
               <div

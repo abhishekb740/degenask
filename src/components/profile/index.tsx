@@ -104,7 +104,7 @@ export default function Profile({
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
-      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[50rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
+      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[45rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
         {loading ? <HeadshotSkeleton /> : headshotData && <Headshot data={headshotData} />}
         {!loading && feed !== "feed" && (
           <div
@@ -128,22 +128,22 @@ export default function Profile({
           </div>
         )}
         {searchQuery && (
-          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-400 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
+          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-[90.7%] rounded-lg shadow-lg scroll-smooth scrollbar">
             {filteredUsers.length ? (
               filteredUsers.map((user) => {
                 return (
                   <button
                     key={user.username}
-                    className="flex flex-row gap-2 items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer"
+                    className="flex flex-row gap-3 hover:bg-neutral-200 items-center w-full px-5 py-2 cursor-pointer"
                     onClick={() => router.push(`/${user.username}`)}
                   >
-                    <span className="w-6 h-6 bg-gradient-to-r from-sky-300 to-blue-500 rounded-full"></span>
-                    <p className="ml-4 text-lg font-primary">{user.username}</p>
+                    <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
+                    <p className="text-lg font-primary">{user.username}</p>
                   </button>
                 );
               })
             ) : (
-              <p className="ml-4 text-lg text-neutral-800 font-primary">No Creators Found</p>
+              <p className="ml-4 text-lg py-2 text-neutral-800 font-primary">No Creators Found</p>
             )}
           </div>
         )}
