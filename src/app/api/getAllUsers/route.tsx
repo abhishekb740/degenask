@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const users = await client.from("farstackUser").select("*");
-    return NextResponse.json(users);
-  } catch (e) {
-    console.log(e);
+    return NextResponse.json({ code: "success", data: users.data });
+  } catch {
+    return NextResponse.json({ code: "failure" });
   }
 }
