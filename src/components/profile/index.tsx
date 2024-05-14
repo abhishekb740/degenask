@@ -15,6 +15,9 @@ import FeedSkeleton from "./skeleton/feed";
 import SetupSkeleton from "./skeleton/setup";
 import { IoMdArrowBack } from "react-icons/io";
 import FarcasterIcon from "@/icons/farcaster";
+import { IoIosSearch } from "react-icons/io";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Headshot = dynamic(() => import("@/components/profile/headshot"), {
   loading: () => <HeadshotSkeleton />,
@@ -35,10 +38,14 @@ const Setup = dynamic(() => import("@/components/profile/setup"), {
 export default function Profile({
   user: profile,
   questions,
+  users,
 }: {
   user: User;
   questions: Questions;
+  users: User[];
 }) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const feed = useAtomValue(feedAtom);
   const setFeed = useSetAtom(feedAtom);
   const profileData = useAtomValue(userAtom);
@@ -49,6 +56,15 @@ export default function Profile({
   const setQuestions = useSetAtom(questionsAtom);
   const { username, address, price, count } = profile;
   const { user: fcUser } = usePrivy();
+
+  const handleOnChange = (e: any) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredUsers = searchQuery
+    ? users.filter((user) => user.username.includes(searchQuery))
+    : [];
+  console.log(filteredUsers);
 
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
@@ -106,6 +122,43 @@ export default function Profile({
             <IoMdArrowBack size={25} />
             <div>Go Back</div>
           </div>
+        )}
+        {loading ? (
+          <div className="w-full h-10 bg-gray-300 rounded-[5rem] mb-4 animate-pulse"></div>
+        ) : (
+          <div className="flex flex-row items-center w-full rounded-[5rem] py-1 border border-neutral-300 px-5 mb-4">
+            <IoIosSearch size={30} className="text-neutral-400" />
+            <input
+              className="flex ml-4 w-full py-2 focus:outline-none"
+              placeholder="Discover Creators"
+              onChange={handleOnChange}
+            />
+          </div>
+        )}
+        {searchQuery && filteredUsers.length > 0 ? (
+          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
+            {filteredUsers.map((user) => (
+              <div
+                className="flex flex-row items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer"
+                onClick={() => router.push(`${user.username}`)}
+              >
+                <div className="flex flex-row items-center gap-2">
+                  <span className="w-6 h-6 bg-gradient-to-r from-sky-300 to-blue-500 rounded-full"></span>
+                  <div className="ml-4 text-lg">{user.username}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          searchQuery && (
+            <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
+              <div className="flex flex-row items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer">
+                <div className="flex flex-row items-center gap-2">
+                  <div className="ml-4 text-lg">No Creators Found</div>
+                </div>
+              </div>
+            </div>
+          )
         )}
         {loading ? (
           <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
