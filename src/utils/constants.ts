@@ -1,4 +1,4 @@
-export const DegenAskContract = "0x6fD1A002156664b1Fdfde4630F7A59c926034BCC";
+export const DegenAskContract = "0x52CdED3dE068280956B3aed817644A6D7EAc6c5b";
 export const TokenContract = "0x052B67B4c458F344B3f32524AeE00Bd95aEc9e68";
 
 export const DegenAskABI = [
@@ -68,11 +68,50 @@ export const DegenAskABI = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_newCharges",
+        type: "uint256",
+      },
+    ],
+    name: "editChargesToPeek",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_fees",
         type: "uint256",
       },
     ],
     name: "editCreatorFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newDeadline",
+        type: "uint256",
+      },
+    ],
+    name: "editDeadline",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newFees",
+        type: "uint256",
+      },
+    ],
+    name: "editProtocolFees",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -142,6 +181,19 @@ export const DegenAskABI = [
     ],
     name: "PaymentReleased",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_questionId",
+        type: "uint256",
+      },
+    ],
+    name: "peekIntoAnswer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     anonymous: false,
