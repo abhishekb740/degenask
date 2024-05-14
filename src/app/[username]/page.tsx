@@ -38,6 +38,8 @@ const Profile = dynamic(() => import("@/components/profile"), {
 });
 
 export default async function Creator({ params }: Props) {
+  const userResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/getAllUsers`);
+  const users = await userResponse.json();
   const user = await fetch(
     `${process.env.NEXT_PUBLIC_HOST_URL}/api/getCreator?username=${params.username}`,
     {
@@ -59,7 +61,7 @@ export default async function Creator({ params }: Props) {
   );
   const questions = await data.json();
   if (response?.data[0]?.username && questions?.data) {
-    return <Profile user={response?.data[0]} questions={questions?.data} />;
+    return <Profile user={response?.data[0]} questions={questions?.data} users={users.data} />;
   } else {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">

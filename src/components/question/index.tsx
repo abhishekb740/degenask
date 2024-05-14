@@ -251,7 +251,7 @@ export default function Questions({ question }: { question: Question }) {
             </div>
           )
         )}
-        {!question.isAnswered ? (
+        {!question.isAnswered && calculateDeadline(question.createdAt) !== "Expired" && (
           <div>
             <div className="my-3">
               <TextArea
@@ -290,10 +290,9 @@ export default function Questions({ question }: { question: Question }) {
               <Button id="button" title="Connect Farcaster" onClick={login} />
             )}
           </div>
-        ) : (
-          <Connect padding="mt-2 p-2.5" />
         )}
-        {calculateDeadline(question.createdAt) === "Expired" && address ? (
+        {question.isAnswered && <Connect padding="mt-2 p-2.5" />}
+        {calculateDeadline(question.createdAt) === "Expired" && !question.isAnswered && address ? (
           <Button
             id="button"
             title={isLoading ? "Processing refund..." : "Claim Refund"}
@@ -310,7 +309,8 @@ export default function Questions({ question }: { question: Question }) {
             }}
           />
         ) : (
-          calculateDeadline(question.createdAt) === "Expired" && <Connect padding="mt-2 p-2.5" />
+          calculateDeadline(question.createdAt) === "Expired" &&
+          !question.isAnswered && <Connect padding="mt-2 p-2.5" />
         )}
       </div>
     </div>

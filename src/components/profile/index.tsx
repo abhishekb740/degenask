@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
@@ -15,6 +15,8 @@ import FeedSkeleton from "./skeleton/feed";
 import SetupSkeleton from "./skeleton/setup";
 import { IoMdArrowBack } from "react-icons/io";
 import FarcasterIcon from "@/icons/farcaster";
+import { IoIosSearch } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const Headshot = dynamic(() => import("@/components/profile/headshot"), {
   loading: () => <HeadshotSkeleton />,
@@ -35,10 +37,14 @@ const Setup = dynamic(() => import("@/components/profile/setup"), {
 export default function Profile({
   user: profile,
   questions,
+  users,
 }: {
   user: User;
   questions: Questions;
+  users: User[];
 }) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const feed = useAtomValue(feedAtom);
   const setFeed = useSetAtom(feedAtom);
   const profileData = useAtomValue(userAtom);
@@ -65,6 +71,8 @@ export default function Profile({
   }`;
 
   const { data, loading } = useQuery(query);
+
+  const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
 
   useEffect(() => {
     if (data) {
@@ -96,7 +104,7 @@ export default function Profile({
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
-      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[50rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
+      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[45rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
         {loading ? <HeadshotSkeleton /> : headshotData && <Headshot data={headshotData} />}
         {!loading && feed !== "feed" && (
           <div
@@ -105,6 +113,38 @@ export default function Profile({
           >
             <IoMdArrowBack size={25} />
             <div>Go Back</div>
+          </div>
+        )}
+        {loading ? (
+          <div className="w-full h-10 bg-gray-300 rounded-[5rem] mb-4 animate-pulse"></div>
+        ) : (
+          <div className="flex flex-row items-center w-full rounded-[5rem] py-1 border border-neutral-300 px-5 mb-4">
+            <IoIosSearch size={30} className="text-neutral-400" />
+            <input
+              className="flex ml-4 w-full py-2 focus:outline-none"
+              placeholder="Discover Creators"
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
+        {searchQuery && (
+          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-[90.7%] rounded-lg shadow-lg scroll-smooth scrollbar">
+            {filteredUsers.length ? (
+              filteredUsers.map((user) => {
+                return (
+                  <button
+                    key={user.username}
+                    className="flex flex-row gap-3 hover:bg-neutral-200 items-center w-full px-5 py-2 cursor-pointer"
+                    onClick={() => router.push(`/${user.username}`)}
+                  >
+                    <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
+                    <p className="text-lg font-primary">{user.username}</p>
+                  </button>
+                );
+              })
+            ) : (
+              <p className="ml-4 text-lg py-2 text-neutral-800 font-primary">No Creators Found</p>
+            )}
           </div>
         )}
         {loading ? (
