@@ -61,9 +61,11 @@ export default function Profile({
     setSearchQuery(e.target.value);
   };
 
-  const filteredUsers = searchQuery
-    ? users.filter((user) => user.username.includes(searchQuery))
-    : [];
+let filteredUsers: User[] = [];           // Put this above before router instance 
+
+useEffect(() => {
+    filteredUsers = users.filter((user) => user.username.includes(searchQuery));
+  }, [searchQuery]);
   console.log(filteredUsers);
 
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
