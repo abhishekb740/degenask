@@ -4,7 +4,7 @@ export function calculateDeadline(createdAt: string): string {
     return "Invalid timestamp";
   }
   const deadline = new Date(createdAtDate);
-  deadline.setDate(deadline.getDate() + 3);
+  deadline.setDate(deadline.getDate() + 2);
   const differenceInMs = deadline.getTime() - Date.now();
   if (differenceInMs <= 0) {
     return "Expired";

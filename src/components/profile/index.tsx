@@ -118,14 +118,16 @@ export default function Profile({
         {loading ? (
           <div className="w-full h-10 bg-gray-300 rounded-[5rem] mb-4 animate-pulse"></div>
         ) : (
-          <div className="flex flex-row items-center w-full rounded-[5rem] py-1 border border-neutral-300 px-5 mb-4">
-            <IoIosSearch size={30} className="text-neutral-400" />
-            <input
-              className="flex ml-4 w-full py-2 focus:outline-none"
-              placeholder="Discover Creators"
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          feed === "feed" && (
+            <div className="flex flex-row items-center w-full rounded-[5rem] py-1 border border-neutral-300 px-5 mb-4">
+              <IoIosSearch size={30} className="text-neutral-400" />
+              <input
+                className="flex ml-4 w-full py-2 focus:outline-none"
+                placeholder="Discover Creators"
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          )
         )}
         {searchQuery && (
           <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-[90.7%] rounded-lg shadow-lg scroll-smooth scrollbar">
