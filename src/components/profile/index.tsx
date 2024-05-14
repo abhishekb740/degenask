@@ -137,30 +137,25 @@ useEffect(() => {
             />
           </div>
         )}
-        {searchQuery && filteredUsers.length > 0 ? (
-          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
-            {filteredUsers.map((user) => (
-              <div
-                className="flex flex-row items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer"
-                onClick={() => router.push(`${user.username}`)}
-              >
-                <div className="flex flex-row items-center gap-2">
-                  <span className="w-6 h-6 bg-gradient-to-r from-sky-300 to-blue-500 rounded-full"></span>
-                  <div className="ml-4 text-lg">{user.username}</div>
-                </div>
-              </div>
-            ))}
+      {searchQuery && (
+          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-400 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
+            {filteredUsers.length ? (
+              filteredUsers.map((user) => {
+                return (
+                  <button
+                    key={user.username}
+                    className="flex flex-row gap-2 items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer"
+                    onClick={() => router.push(`/${user.username}`)}
+                  >
+                    <span className="w-6 h-6 bg-gradient-to-r from-sky-300 to-blue-500 rounded-full"></span>
+                    <p className="ml-4 text-lg font-primary">{user.username}</p>
+                  </button>
+                );
+              })
+            ) : (
+              <p className="ml-4 text-lg text-neutral-800 font-primary">No Creators Found</p>
+            )}
           </div>
-        ) : (
-          searchQuery && (
-            <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
-              <div className="flex flex-row items-center w-full rounded-[5rem] px-5 py-2 cursor-pointer">
-                <div className="flex flex-row items-center gap-2">
-                  <div className="ml-4 text-lg">No Creators Found</div>
-                </div>
-              </div>
-            </div>
-          )
         )}
         {loading ? (
           <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
