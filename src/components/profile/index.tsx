@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
@@ -16,7 +16,6 @@ import SetupSkeleton from "./skeleton/setup";
 import { IoMdArrowBack } from "react-icons/io";
 import FarcasterIcon from "@/icons/farcaster";
 import { IoIosSearch } from "react-icons/io";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const Headshot = dynamic(() => import("@/components/profile/headshot"), {
@@ -57,17 +56,6 @@ export default function Profile({
   const { username, address, price, count } = profile;
   const { user: fcUser } = usePrivy();
 
-  const handleOnChange = (e: any) => {
-    setSearchQuery(e.target.value);
-  };
-
-let filteredUsers: User[] = [];           // Put this above before router instance 
-
-useEffect(() => {
-    filteredUsers = users.filter((user) => user.username.includes(searchQuery));
-  }, [searchQuery]);
-  console.log(filteredUsers);
-
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
     Socials(
@@ -83,6 +71,8 @@ useEffect(() => {
   }`;
 
   const { data, loading } = useQuery(query);
+
+  const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
 
   useEffect(() => {
     if (data) {
@@ -133,11 +123,11 @@ useEffect(() => {
             <input
               className="flex ml-4 w-full py-2 focus:outline-none"
               placeholder="Discover Creators"
-              onChange={handleOnChange}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         )}
-      {searchQuery && (
+        {searchQuery && (
           <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-400 bg-white w-[92%] rounded-lg scroll-smooth scrollbar">
             {filteredUsers.length ? (
               filteredUsers.map((user) => {
