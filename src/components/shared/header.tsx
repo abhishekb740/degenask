@@ -1,7 +1,3 @@
-type HeaderProps = {
-  color: string;
-};
-
-export default function Header(color: HeaderProps) {
-  return <div className={`text-${color.color} mb-[7rem]`}>degenask.me</div>;
+export default function Header({ color }: { color: string }) {
+  return <div className={`text-${color} text-2xl font-title mb-20`}>degenask.me</div>;
 }

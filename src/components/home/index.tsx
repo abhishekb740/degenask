@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { useLogin, useLogout, usePrivy, useWallets } from "@privy-io/react-auth";
+import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FarcasterIcon from "@/icons/farcaster";
@@ -71,12 +71,12 @@ export default function Hero({ users }: { users: User[] }) {
         const isExist = users.find(
           (profile: User) => profile.username === user?.farcaster?.username,
         );
-        if (isExist) {
-          router.push(`/${user?.farcaster?.username}`);
-          return;
-        }
+        // if (isExist) {
+        //   router.push(`/${user?.farcaster?.username}`);
+        //   return;
+        // }
       }
-      await setProfile();
+      // await setProfile();
     },
     onError(error) {
       toast.error("Encountered with login error, try again!", {
@@ -102,7 +102,7 @@ export default function Hero({ users }: { users: User[] }) {
       </h1>
       {!isLoggedIn ? (
         <button
-          className="flex w-fit gap-3 px-5 py-3.5 items-center font-primary text-neutral-100 bg-[#A36EFD] hover:text-gray-50 hover:shadow-lg rounded-lg"
+          className="flex my-5 w-fit gap-3 px-5 py-3.5 items-center font-primary text-neutral-100 bg-[#A36EFD] hover:text-gray-50 hover:shadow-lg rounded-xl"
           onClick={login}
           disabled={!ready && authenticated}
         >
@@ -136,14 +136,12 @@ export default function Hero({ users }: { users: User[] }) {
           </div> */}
         </div>
       )}
-      <div className="flex flex-col gap-8">
-        <div className="text-white flex flex-col justify-center items-center">
-          Ask some of our OGs
-        </div>
+      <div className="flex flex-col gap-10">
+        <p className="text-white text-center text-lg font-primary">Ask some of our OGs</p>
         <div className="grid grid-cols-4 gap-6">
           {OGs.map((og) => (
-            <div key={og.username} className="flex flex-col justify-center items-center">
-              <img src={og.pfp} alt="og-pfp" className="w-10 h-10 rounded-full" />
+            <div key={og.username} className="flex flex-col justify-center items-center gap-2">
+              <img src={og.pfp} alt="pfp" className="w-16 h-16 rounded-full" />
               <span className="text-white">{og.username}</span>
             </div>
           ))}
