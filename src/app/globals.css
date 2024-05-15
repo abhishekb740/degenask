@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 @font-face {
+  font-family: "Kangmas";
+  src: url("../fonts/Kangmas.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
   font-family: "Trap";
   src: url("../fonts/Trap-Bold.otf") format("opentype");
   font-weight: 700;

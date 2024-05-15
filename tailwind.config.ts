@@ -15,6 +15,7 @@ const config: Config = {
       },
     },
     fontFamily: {
+      og: ["Kangmas"],
       title: ["Trap"],
       primary: ["Roobert"],
     },
