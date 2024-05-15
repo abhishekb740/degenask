@@ -14,7 +14,7 @@ const Button = ({ id, label, title, helper, onClick, disabled }: IButton) => {
     <div>
       <label
         htmlFor={id}
-        className="text-neutral-600 text-sm md:text-lg"
+        className="text-neutral-500 text-sm md:text-lg"
         style={{ marginRight: 0 }}
       >
         {label}
@@ -22,7 +22,7 @@ const Button = ({ id, label, title, helper, onClick, disabled }: IButton) => {
       <button
         id={id}
         onClick={onClick}
-        className="bg-indigo-500 hover:bg-indigo-600 text-white p-2.5 rounded-lg w-full disabled:cursor-progress"
+        className="bg-[#A36EFD] hover:bg-[#9a61fc] hover:shadow-lg text-white py-2.5 px-10 rounded-3xl w-fit disabled:cursor-progress"
         disabled={disabled}
       >
         <div className="font-medium font-primary text-sm md:text-md lg:text-lg justify-center">

@@ -24,7 +24,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             config={{
               appearance: {
                 theme: "dark",
-                accentColor: "#676FFF",
+                accentColor: "#4C2897",
                 logo: "/favicon.png",
               },
               defaultChain: baseSepolia,

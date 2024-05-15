@@ -9,7 +9,6 @@ import type { Profile, Questions, User } from "@/types";
 import { feedAtom, headshotAtom, questionsAtom, userAtom } from "@/store";
 import Button from "@/components/form/button";
 import dynamic from "next/dynamic";
-import HeadshotSkeleton from "./skeleton/headshot";
 import AskSkeleton from "./skeleton/ask";
 import FeedSkeleton from "./skeleton/feed";
 import SetupSkeleton from "./skeleton/setup";
@@ -17,10 +16,6 @@ import { IoMdArrowBack } from "react-icons/io";
 import FarcasterIcon from "@/icons/farcaster";
 import { IoIosSearch } from "react-icons/io";
 import { useRouter } from "next/navigation";
-
-const Headshot = dynamic(() => import("@/components/profile/headshot"), {
-  loading: () => <HeadshotSkeleton />,
-});
 
 const AskQuestion = dynamic(() => import("@/components/profile/ask"), {
   loading: () => <AskSkeleton />,
@@ -74,18 +69,18 @@ export default function Profile({
 
   const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
 
-  useEffect(() => {
-    if (data) {
-      setHeadshot({
-        username,
-        name: data.Socials.Social[0].profileDisplayName,
-        bio: data.Socials.Social[0].profileBio,
-        followers: data.Socials.Social[0].followerCount,
-        image: data.Socials.Social[0].profileImage,
-        count,
-      });
-    }
-  }, [data, loading, username, count]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setHeadshot({
+  //       username,
+  //       name: data.Socials.Social[0].profileDisplayName,
+  //       bio: data.Socials.Social[0].profileBio,
+  //       followers: data.Socials.Social[0].followerCount,
+  //       image: data.Socials.Social[0].profileImage,
+  //       count,
+  //     });
+  //   }
+  // }, [data, loading, username, count]);
 
   useEffect(() => {
     if (address === null || price === null) {
@@ -105,7 +100,6 @@ export default function Profile({
   return (
     <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
       <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[45rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
-        {loading ? <HeadshotSkeleton /> : headshotData && <Headshot data={headshotData} />}
         {!loading && feed !== "feed" && (
           <div
             onClick={() => setFeed("feed")}

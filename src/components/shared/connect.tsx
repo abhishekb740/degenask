@@ -1,6 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-export default function Connect({ padding }: { padding: string }) {
+export default function Connect() {
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
@@ -22,7 +22,7 @@ export default function Connect({ padding }: { padding: string }) {
               if (!connected) {
                 return (
                   <button
-                    className={`${padding} bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full`}
+                    className="bg-[#A36EFD] font-primary text-white rounded-3xl py-2.5 px-10 block w-fit hover:bg-[#9a61fc] hover:shadow-lg font-medium text-sm md:text-md lg:text-lg"
                     onClick={openConnectModal}
                     type="button"
                   >
@@ -33,7 +33,7 @@ export default function Connect({ padding }: { padding: string }) {
               if (chain.unsupported) {
                 return (
                   <button
-                    className={`${padding} bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full`}
+                    className="bg-[#A36EFD] font-primary text-white rounded-3xl py-2.5 px-10 block w-fit hover:bg-[#9a61fc] hover:shadow-lg font-medium text-sm md:text-md lg:text-lg"
                     onClick={openChainModal}
                     type="button"
                   >
@@ -44,7 +44,7 @@ export default function Connect({ padding }: { padding: string }) {
               return (
                 <div style={{ display: "flex", gap: 12 }}>
                   <button
-                    className={`${padding} bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full`}
+                    className="bg-[#A36EFD] font-primary text-white rounded-3xl py-2.5 px-10 block w-fit hover:bg-[#9a61fc] hover:shadow-lg font-medium text-sm md:text-md lg:text-lg"
                     onClick={openAccountModal}
                     type="button"
                   >

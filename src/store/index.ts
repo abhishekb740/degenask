@@ -19,7 +19,7 @@ export const headshotAtom = atom<UserData>({
   bio: "",
   followers: 0,
   image: "",
-  count: 0,
+  followings: 0,
 });
 
 export const questionsAtom = atom<Questions>([]);
