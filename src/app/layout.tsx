@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="h-screen bg-[#4C2897]">
+      <body className="h-screen bg-[#F8FAFC]">
         <Providers>{children}</Providers>
         <Analytics />
         <Toaster />

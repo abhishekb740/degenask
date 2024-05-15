@@ -75,8 +75,8 @@ export default function Hero({ users }: { users: User[] }) {
   // });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-20">
-      <h1 className="text-[3rem] text-center font-title font-semibold text-neutral-200">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-20 bg-[#4C2897]">
+      <h1 className="text-[3rem] text-center font-primary font-semibold text-neutral-200">
         Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
       </h1>
       {!isLoggedIn ? (
