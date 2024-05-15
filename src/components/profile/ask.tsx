@@ -4,34 +4,32 @@ import { useEffect, useState } from "react";
 import TextArea from "@/components/form/textarea";
 import Button from "@/components/form/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { feedAtom, questionsAtom } from "@/store";
+import { headshotAtom, questionsAtom } from "@/store";
 import { publicClient } from "@/utils/config";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import toast from "react-hot-toast";
 import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
 import { formatEther, parseEther } from "viem";
 import generateUniqueId from "generate-unique-id";
-import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
-import Connect from "../shared/connect";
-import { Question } from "@/types";
+import { Question, User } from "@/types";
+import dynamic from "next/dynamic";
 
-interface IAskQuestionProps {
-  price: number;
-  creatorAddress: string;
-  creatorUsername: string;
-}
+const Connect = dynamic(() => import("@/components/shared/connect"), {
+  ssr: false,
+});
 
-export default function AskQuestion({ price, creatorAddress, creatorUsername }: IAskQuestionProps) {
+export default function AskQuestion({ user }: { user: User }) {
+  const { price, username: creatorUsername, address: creatorAddress } = user;
+  const headshotData = useAtomValue(headshotAtom);
+  const { name } = headshotData;
   const [balance, setBalance] = useState<number>();
   const [questionId, setQuestionId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [questionContent, setQuestionContent] = useState<string>("");
-  const setFeed = useSetAtom(feedAtom);
   const questionsData = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
-  const { address } = useAccount();
-  const { authenticated, user, createWallet } = usePrivy();
-  const { wallets } = useWallets();
+  const { address, chainId } = useAccount();
   const { data, writeContractAsync, status } = useWriteContract();
   const {
     data: approvalData,
@@ -126,7 +124,6 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
         content: questionContent,
         creatorUsername,
         creatorAddress,
-        authorUsername: user?.farcaster?.username,
         authorAddress: address,
         isAnswered: false,
         price,
@@ -144,15 +141,13 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
       questionId,
       content: questionContent,
       creatorUsername,
-      authorUsername: user?.farcaster?.username ?? "",
       price,
       createdAt: new Date().toISOString(),
       creatorAddress,
       authorAddress: address as string,
       isAnswered: false,
     };
-    setQuestions([...questionsData, question]);
-    setFeed("feed");
+    setQuestions([question, ...questionsData]);
   };
 
   useEffect(() => {
@@ -185,94 +180,43 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
     getBalance();
   }, [address]);
 
-  const setProfile = async () => {
-    const response = await fetch("/api/setCreator", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: user?.farcaster?.username,
-        fid: user?.farcaster?.fid,
-      }),
-    });
-    if (response.status === 200) {
-      toast.success("User created successfully", {
-        style: {
-          borderRadius: "10px",
-        },
-      });
-    }
-  };
+  useEffect(() => {
+    setIsPageLoading(false);
+  }, []);
 
-  const { login } = useLogin({
-    async onComplete(user) {
-      if (authenticated) {
-        if (wallets.length === 0) {
-          const res = createWallet();
-        }
-      }
-      await setProfile();
-    },
-    onError(error) {
-      console.log("🔑 🚨 Login error", { error });
-    },
-  });
   return (
-    <div>
-      <div className="mb-3">
-        <TextArea
-          id="content"
-          name="content"
-          label="Ask a question"
-          placeholder="Degen IRL party wen?"
-          value={questionContent}
-          onChange={(e) => setQuestionContent(e.target.value)}
+    <div className="flex flex-col w-full md:w-3/5 gap-5 font-primary">
+      <h3 className="text-xl text-neutral-500">Ask {name} a question</h3>
+      <TextArea
+        id="content"
+        name="content"
+        placeholder="Type a question here..."
+        value={questionContent}
+        onChange={(e) => setQuestionContent(e.target.value)}
+      />
+      {isPageLoading ? (
+        <Button id="askQuestion" title="Ask question" />
+      ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
+        <Button
+          id="askQuestion"
+          title={isLoading ? "Posting question..." : `Ask with ${price} DEGEN`}
+          disabled={isLoading || !questionContent}
+          onClick={() => {
+            if (balance && Number(balance) >= price) {
+              setIsLoading(true);
+              getApproval();
+            } else {
+              toast.error("Insufficient balance", {
+                style: {
+                  borderRadius: "10px",
+                },
+              });
+            }
+          }}
         />
-        <span className="flex flex-row justify-between items-center">
-          <p className="text-indigo-500">Balance: {balance ? balance : 0}</p>
-          <Connect />
-        </span>
-      </div>
-      <div>
-        {user?.farcaster?.username ? (
-          <Button
-            id="button"
-            title={isLoading ? "Posting question..." : `Pay ${price} DEGEN`}
-            disabled={isLoading}
-            onClick={() => {
-              if (address) {
-                if (questionContent) {
-                  if (balance && Number(balance) >= price) {
-                    setIsLoading(true);
-                    getApproval();
-                  } else {
-                    toast.error("Insufficient balance", {
-                      style: {
-                        borderRadius: "10px",
-                      },
-                    });
-                  }
-                } else {
-                  toast.error("Please ask your question", {
-                    style: {
-                      borderRadius: "10px",
-                    },
-                  });
-                }
-              } else {
-                toast.error("Connect wallet to ask question", {
-                  style: {
-                    borderRadius: "10px",
-                  },
-                });
-              }
-            }}
-          />
-        ) : (
-          <Button id="button" title="Connect Farcaster" onClick={login} />
-        )}
-      </div>
+      ) : (
+        <Connect />
+      )}
     </div>
   );
 }

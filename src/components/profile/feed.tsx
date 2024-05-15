@@ -1,35 +1,26 @@
 import React from "react";
-import type { Questions } from "@/types";
-import { useRouter } from "next/navigation";
+import type { Question } from "@/types";
 
-export default function Feed({ questions }: { questions: Questions }) {
-  const router = useRouter();
+export default function Feed({ key, question }: { key: string; question: Question }) {
+  function formatAddress(address: string): string {
+    if (address.length <= 8) {
+      return address;
+    } else {
+      const firstPart = address.substring(0, 4);
+      const lastPart = address.substring(address.length - 4);
+      return `${firstPart}...${lastPart}`;
+    }
+  }
   return (
-    <div>
-      <div className="flex flex-col max-h-[20rem] overflow-auto font-primary rounded-lg scroll-smooth scrollbar">
-        {questions.length > 0
-          ? questions?.map((question) => (
-              <div
-                key={question.questionId}
-                className="bg-neutral-100 p-5 my-1.5 rounded-xl flex flex-col border border-neutral-100 hover:cursor-pointer hover:shadow-lg hover:border-neutral-300"
-                onClick={() => {
-                  router.push(`/${question.creatorUsername}/${question.questionId}`);
-                }}
-              >
-                <p className="mb-2 text-neutral-800">{question?.content}</p>
-                <span className="flex flex-row items-center justify-between">
-                  <div className="flex flex-row text-sm gap-1 items-center">
-                    asked by
-                    <p className="text-indigo-500 font-medium">{question?.authorUsername}</p>
-                  </div>
-                  <p className="text-sm text-neutral-700">
-                    {question?.isAnswered ? "Answered" : "Not Answered"}
-                  </p>
-                </span>
-              </div>
-            ))
-          : null}
-      </div>
+    <div
+      key={key}
+      className="flex flex-col bg-white p-4 sm:p-6 w-full mb-3.5 font-primary rounded-3xl shadow-xl"
+    >
+      <span className="flex flex-row gap-4 items-center">
+        <span className="w-8 h-8 bg-gradient-to-b from-violet-500 to-blue-600 rounded-full"></span>
+        {formatAddress(question.authorAddress)}
+      </span>
+      <p className="mt-2">{question.content}</p>
     </div>
   );
 }

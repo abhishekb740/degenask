@@ -3,16 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const {
-    questionId,
-    content,
-    creatorUsername,
-    creatorAddress,
-    authorUsername,
-    authorAddress,
-    price,
-    isAnswered,
-  } = body;
+  const { questionId, content, creatorUsername, creatorAddress, authorAddress, price, isAnswered } =
+    body;
 
   try {
     const existingQuestion = await client
@@ -35,7 +27,6 @@ export async function POST(req: NextRequest) {
         content,
         creatorUsername,
         creatorAddress,
-        authorUsername,
         authorAddress,
         price,
         isAnswered,

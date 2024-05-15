@@ -13,7 +13,6 @@ export interface Question {
   questionId: string;
   content: string;
   creatorUsername: string;
-  authorUsername: string;
   price: number;
   createdAt: string;
   creatorAddress: string;

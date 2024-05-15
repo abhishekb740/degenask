@@ -11,7 +11,7 @@ import { userAtom } from "@/store";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
-const ConnectButton = dynamic(() => import("@/components/shared/connect"), {
+const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
 });
 
@@ -89,12 +89,10 @@ export default function SetProfile({ user }: { user: User }) {
         },
       });
       setUser({
-        user: {
-          username,
-          address: String(address),
-          price: fees ?? 0,
-          count,
-        },
+        username,
+        address: String(address),
+        price: fees ?? 0,
+        count,
       });
     }
     setIsLoading(false);
@@ -132,14 +130,14 @@ export default function SetProfile({ user }: { user: User }) {
           setFees(e.target.value);
         }}
         value={fees}
-        suffix={`DEGEN ${fees ? `(${(fees * 0.024).toFixed(2)} USD)` : ``}`}
+        suffix={`DEGEN ${fees ? `(${(fees * 0.014).toFixed(2)} USD)` : ``}`}
       />
       {isPageLoading ? (
         <Button id="setPrice" title="Create a Page" />
-      ) : address && chainId === 84532 ? (
+      ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
         <Button
           id="setPrice"
-          title="Create a Page"
+          title={isLoading ? "Creating page..." : "Create a Page"}
           disabled={isLoading || !fees}
           onClick={() => {
             setIsLoading(true);
@@ -147,7 +145,7 @@ export default function SetProfile({ user }: { user: User }) {
           }}
         />
       ) : (
-        <ConnectButton />
+        <Connect />
       )}
     </div>
   );

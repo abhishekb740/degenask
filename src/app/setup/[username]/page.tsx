@@ -19,10 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "en_US",
       url: process.env.NEXT_PUBLIC_HOST_URL,
-      siteName: "degenask",
+      siteName: "DegenAsk",
       images: {
         url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.svg`,
-        alt: "degenAsk",
+        alt: "DegenAsk",
       },
     },
   };
