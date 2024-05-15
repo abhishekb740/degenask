@@ -6,6 +6,26 @@ import { useRouter } from "next/navigation";
 import FarcasterIcon from "@/icons/farcaster";
 import toast from "react-hot-toast";
 import { User } from "@/types";
+import Header from "../shared/header";
+
+const OGs = [
+  {
+    pfp: "https://i.imgur.com/rOy7TtZ.gif",
+    username: "jessepolak",
+  },
+  {
+    pfp: "https://i.imgur.com/vHVlojT.gif",
+    username: "jacek",
+  },
+  {
+    pfp: "https://i.imgur.com/Ut3XLfb.gif",
+    username: "markfishman",
+  },
+  {
+    pfp: "https://i.imgur.com/liviil4.jpg",
+    username: "proxystudio.eth",
+  },
+];
 
 export default function Hero({ users }: { users: User[] }) {
   const router = useRouter();
@@ -76,6 +96,7 @@ export default function Hero({ users }: { users: User[] }) {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-20 bg-[#4C2897]">
+      <Header color="white" />
       <h1 className="text-[3rem] text-center font-primary font-semibold text-neutral-200">
         Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
       </h1>
@@ -115,6 +136,19 @@ export default function Hero({ users }: { users: User[] }) {
           </div> */}
         </div>
       )}
+      <div className="flex flex-col gap-8">
+        <div className="text-white flex flex-col justify-center items-center">
+          Ask some of our OGs
+        </div>
+        <div className="grid grid-cols-4 gap-6">
+          {OGs.map((og) => (
+            <div key={og.username} className="flex flex-col justify-center items-center">
+              <img src={og.pfp} alt="og-pfp" className="w-10 h-10 rounded-full" />
+              <span className="text-white">{og.username}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </main>
   );
 }
