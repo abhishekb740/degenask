@@ -30,7 +30,7 @@ export interface UserData {
   bio: string;
   followers: number;
   image: string;
-  count: number;
+  followings: number;
 }
 
 export interface Answer {

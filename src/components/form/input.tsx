@@ -9,28 +9,32 @@ interface IInput {
   onChange: (e: any) => void;
   value?: string | number;
   helper?: string;
+  suffix?: string;
 }
 
-const Input = ({ id, name, label, placeholder, type, onChange, value, helper }: IInput) => {
+const Input = ({ id, name, label, placeholder, type, onChange, value, helper, suffix }: IInput) => {
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor={id}
-        className="text-neutral-600 text-sm md:text-lg"
+        className="text-neutral-500 text-sm md:text-lg"
         style={{ marginRight: 0 }}
       >
         {label}
       </label>
-      <input
-        id={id}
-        name={name}
-        onChange={onChange}
-        className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm placeholder:text-neutral-500 rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5"
-        placeholder={placeholder}
-        type={type}
-        value={value}
-        required
-      />
+      <div className="flex flex-row w-full items-center justify-between mt-2 bg-[#F6F6F6] text-neutral-500 rounded-xl px-2.5">
+        <input
+          id={id}
+          name={name}
+          onChange={onChange}
+          className="font-primary text-neutral-800 bg-[#F6F6F6] text-sm placeholder:text-neutral-400 focus:outline-none block w-[70%] px-2.5 py-3.5"
+          placeholder={placeholder}
+          type={type}
+          value={value}
+          required
+        />
+        <p className="min-w-[10%]">{suffix}</p>
+      </div>
       <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>
     </div>
   );

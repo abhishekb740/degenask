@@ -291,7 +291,7 @@ export default function Questions({ question }: { question: Question }) {
             )}
           </div>
         )}
-        {question.isAnswered && <Connect padding="mt-2 p-2.5" />}
+        {question.isAnswered && <Connect />}
         {calculateDeadline(question.createdAt) === "Expired" && !question.isAnswered && address ? (
           <Button
             id="button"
@@ -309,8 +309,7 @@ export default function Questions({ question }: { question: Question }) {
             }}
           />
         ) : (
-          calculateDeadline(question.createdAt) === "Expired" &&
-          !question.isAnswered && <Connect padding="mt-2 p-2.5" />
+          calculateDeadline(question.createdAt) === "Expired" && !question.isAnswered && <Connect />
         )}
       </div>
     </div>

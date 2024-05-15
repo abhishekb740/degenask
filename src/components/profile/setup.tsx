@@ -115,7 +115,7 @@ export default function Setup({ user }: Profile) {
       <div className="flex flex-col sm:flex-row w-full gap-3 mb-3">
         <span className="w-full sm:w-[60%]">
           <p className="text-neutral-600 text-sm md:text-lg">Payment Address</p>
-          <Connect padding="mt-2 p-2.5" />
+          <Connect />
           <div className="text-sm mt-1 font-primary text-neutral-400">
             You will receive payment on this address
           </div>

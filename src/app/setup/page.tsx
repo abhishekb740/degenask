@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const SetupProfile = dynamic(() => import("@/components/setup"), {
   loading: () => (
     <div className="min-h-screen flex justify-center items-center text-xl text-neutral-700 font-medium">
-      Fetching profile...
+      Setting up profile...
     </div>
   ),
 });

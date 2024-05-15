@@ -231,7 +231,7 @@ export default function AskQuestion({ price, creatorAddress, creatorUsername }: 
         />
         <span className="flex flex-row justify-between items-center">
           <p className="text-indigo-500">Balance: {balance ? balance : 0}</p>
-          <Connect padding="mt-1 p-2" />
+          <Connect />
         </span>
       </div>
       <div>
