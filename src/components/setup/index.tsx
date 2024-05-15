@@ -51,9 +51,9 @@ export default function SetupProfile() {
     }
   }, [data, loading]);
 
-  if (fcUser?.farcaster?.username === "") {
+  if (fcUser?.farcaster?.username === undefined) {
     router.push("/");
-    return;
+    return null;
   }
 
   return (
