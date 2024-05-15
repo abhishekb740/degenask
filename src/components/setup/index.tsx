@@ -12,12 +12,13 @@ import { useSetAtom } from "jotai";
 import { headshotAtom } from "@/store";
 import HeadshotSkeleton from "../shared/skeletons/headshot";
 import SetProfile from "./setup";
+import { User } from "@/types";
 
 const Headshot = dynamic(() => import("@/components/shared/headsot"), {
   loading: () => <HeadshotSkeleton />,
 });
 
-export default function SetupProfile() {
+export default function SetupProfile({ user }: { user: User }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setHeadshot = useSetAtom(headshotAtom);
@@ -26,9 +27,12 @@ export default function SetupProfile() {
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
       Socials(
-        input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${fcUser?.farcaster?.username}"}}, blockchain: ethereum}
+        input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${user.username}"}}, blockchain: ethereum}
       ) {
         Social {
+          profileBio
+          profileDisplayName
+          profileImage
           followingCount
           followerCount
         }
@@ -40,10 +44,10 @@ export default function SetupProfile() {
   useEffect(() => {
     if (data) {
       setHeadshot({
-        username: fcUser?.farcaster?.username ?? "",
-        name: fcUser?.farcaster?.displayName ?? "",
-        bio: fcUser?.farcaster?.bio ?? "",
-        image: fcUser?.farcaster?.pfp ?? "",
+        username: user.username,
+        name: data.Socials.Social[0].profileDisplayName,
+        bio: data.Socials.Social[0].profileBio,
+        image: data.Socials.Social[0].profileImage,
         followers: data.Socials.Social[0].followerCount,
         followings: data.Socials.Social[0].followingCount,
       });
@@ -51,16 +55,16 @@ export default function SetupProfile() {
     }
   }, [data, loading]);
 
-  if (fcUser?.farcaster?.username === undefined) {
-    router.push("/");
-    return null;
-  }
+  // if (fcUser?.farcaster?.username === undefined) {
+  //   router.push("/");
+  //   return null;
+  // }
 
   return (
     <Layout>
       <div className="relative flex flex-col gap-3 md:flex-row bg-white p-4 sm:p-5 md:p-8 w-full sm:w-2/3 md:w-4/5 lg:w-3/4 font-primary rounded-3xl shadow-xl">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
-        <SetProfile />
+        <SetProfile user={user} />
       </div>
     </Layout>
   );

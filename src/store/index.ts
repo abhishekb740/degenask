@@ -6,7 +6,6 @@ export const feedAtom = atom<string>("");
 export const userAtom = atom<Profile>({
   user: {
     username: "",
-    fid: 0,
     count: 0,
     address: "",
     price: 0,

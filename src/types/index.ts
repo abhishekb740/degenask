@@ -1,6 +1,5 @@
 export interface User {
   username: string;
-  fid: number;
   count: number;
   address: string;
   price: number;

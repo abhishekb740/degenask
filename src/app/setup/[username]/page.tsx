@@ -3,6 +3,12 @@ import dynamic from "next/dynamic";
 
 export const fetchCache = "force-no-store";
 
+type Props = {
+  params: {
+    username: string;
+  };
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Setup | DegenAsk`,
@@ -30,6 +36,16 @@ const SetupProfile = dynamic(() => import("@/components/setup"), {
   ),
 });
 
-export default async function Setup() {
-  return <SetupProfile />;
+export default async function Setup({ params }: Props) {
+  const user = await fetch(
+    `${process.env.NEXT_PUBLIC_HOST_URL}/api/getCreator?username=${params.username}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const response = await user.json();
+  return <SetupProfile user={response?.data[0]} />;
 }

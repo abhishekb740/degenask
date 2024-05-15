@@ -25,10 +25,6 @@ const Feed = dynamic(() => import("@/components/profile/feed"), {
   loading: () => <FeedSkeleton />,
 });
 
-const Setup = dynamic(() => import("@/components/profile/setup"), {
-  loading: () => <SetupSkeleton />,
-});
-
 export default function Profile({
   user: profile,
   questions,
@@ -172,9 +168,7 @@ export default function Profile({
           ))
         )}
         <div className="mt-2">
-          {!loading && feed === "setup" ? (
-            <Setup user={profileData.user} />
-          ) : feed === "ask" ? (
+          {!loading && feed === "ask" ? (
             <AskQuestion
               creatorUsername={username}
               creatorAddress={profileData.user.address}

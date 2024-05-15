@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { username, fid, address, count, price } = body;
+  const { username, address, count, price } = body;
 
   try {
     const existingUser = await client.from("farstackUser").select("*").eq("username", username);
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
     } else {
       const response = await client.from("farstackUser").insert({
         username,
-        fid,
       });
       if (response.error) {
         return NextResponse.json({ code: "failure", response });
