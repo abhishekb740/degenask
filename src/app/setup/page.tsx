@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: process.env.NEXT_PUBLIC_HOST_URL,
       siteName: "degenask",
       images: {
-        url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.png`,
+        url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.svg`,
         alt: "degenAsk",
       },
     },
