@@ -7,6 +7,8 @@ import FarcasterIcon from "@/icons/farcaster";
 import toast from "react-hot-toast";
 import { User } from "@/types";
 import Header from "../shared/header";
+import { useSetAtom } from "jotai";
+import { authAtom } from "@/store";
 
 const OGs = [
   {
@@ -32,6 +34,7 @@ export default function Hero({ users }: { users: User[] }) {
   // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { ready, authenticated, user, createWallet } = usePrivy();
+  const setAuth = useSetAtom(authAtom);
   const { wallets } = useWallets();
 
   // const toggleDropdown = () => {
@@ -55,6 +58,7 @@ export default function Hero({ users }: { users: User[] }) {
           borderRadius: "10px",
         },
       });
+      setAuth("setup");
       router.push("/setup");
     }
   };
@@ -71,12 +75,12 @@ export default function Hero({ users }: { users: User[] }) {
         const isExist = users.find(
           (profile: User) => profile.username === user?.farcaster?.username,
         );
-        // if (isExist) {
-        //   router.push(`/${user?.farcaster?.username}`);
-        //   return;
-        // }
+        if (isExist) {
+          router.push(`/${user?.farcaster?.username}`);
+          return;
+        }
       }
-      // await setProfile();
+      await setProfile();
     },
     onError(error) {
       toast.error("Encountered with login error, try again!", {

@@ -3,13 +3,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePrivy } from "@privy-io/react-auth";
 import Layout from "../layout";
 import { useRouter } from "next/navigation";
 import { init, useQuery } from "@airstack/airstack-react";
 import { useEffect, useState } from "react";
-import { useSetAtom } from "jotai";
-import { headshotAtom } from "@/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { authAtom, headshotAtom } from "@/store";
 import HeadshotSkeleton from "../shared/skeletons/headshot";
 import SetProfile from "./setup";
 import { User } from "@/types";
@@ -22,7 +21,7 @@ export default function SetupProfile({ user }: { user: User }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setHeadshot = useSetAtom(headshotAtom);
-  const { user: fcUser } = usePrivy();
+  const auth = useAtomValue(authAtom);
 
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
@@ -55,10 +54,10 @@ export default function SetupProfile({ user }: { user: User }) {
     }
   }, [data, loading]);
 
-  // if (fcUser?.farcaster?.username === undefined) {
-  //   router.push("/");
-  //   return null;
-  // }
+  if (auth !== "setup") {
+    router.push("/");
+    return null;
+  }
 
   return (
     <Layout>

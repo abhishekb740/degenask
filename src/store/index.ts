@@ -1,6 +1,8 @@
 import { Questions, User, UserData } from "@/types";
 import { atom } from "jotai";
 
+export const authAtom = atom<string>("");
+
 export const userAtom = atom<User>({
   username: "",
   count: 0,
