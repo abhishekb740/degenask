@@ -1,4 +1,6 @@
 import { Hero } from "@/components";
+import { User } from "@/types";
+import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
 
 export const fetchCache = "force-no-store";
@@ -23,7 +25,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/getAllUsers`);
-  const users = await response.json();
-  return <Hero users={users.data} />;
+  try {
+    const { data } = await client.from("farstackUser").select("*");
+    return <Hero users={data as User[]} />;
+  } catch (e) {
+    return null;
+  }
 }

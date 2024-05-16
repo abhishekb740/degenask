@@ -1,18 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Button from "@/components/form/button";
-import { useAtomValue } from "jotai";
-import { headshotAtom } from "@/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { authAtom, headshotAtom } from "@/store";
 import { User } from "@/types";
+import { FaRegEdit } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function Account({ user }: { user: User }) {
   const { price, username: creatorUsername, address: creatorAddress } = user;
   const headshotData = useAtomValue(headshotAtom);
   const { name } = headshotData;
+  const setAuth = useSetAtom(authAtom);
+  const router = useRouter();
 
   return (
     <div className="flex flex-col w-full md:w-3/5 gap-5 font-primary">
-      <h3 className="text-xl text-neutral-500">{name}&apos;s Degenask</h3>
+      <span className="flex flex-row w-full items-center justify-between">
+        <h3 className="text-xl text-neutral-500">{name}&apos;s Degenask</h3>
+        <button
+          className="flex flex-row gap-2 w-fit text-neutral-600 hover:text-neutral-800 items-center justify-center"
+          onClick={() => {
+            setAuth("setup");
+            router.push(`/setup/${creatorUsername}`);
+          }}
+        >
+          <FaRegEdit /> Edit
+        </button>
+      </span>
       <div className="flex flex-col gap-2">
         <span className="bg-[#F6F6F6] text-lg p-4 font-medium rounded-xl truncate">
           <p className="text-neutral-500 text-md font-regular">Address to receive Funds</p>

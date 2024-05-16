@@ -10,6 +10,7 @@ import type { User } from "@/types";
 import { userAtom } from "@/store";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
@@ -22,6 +23,7 @@ export default function SetProfile({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setUser = useSetAtom(userAtom);
   const router = useRouter();
+  const { user: fcUser } = usePrivy();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const { data, writeContractAsync, status } = useWriteContract();
   const {
@@ -140,8 +142,29 @@ export default function SetProfile({ user }: { user: User }) {
           title={isLoading ? "Creating page..." : "Create a Page"}
           disabled={isLoading || !fees}
           onClick={() => {
-            setIsLoading(true);
-            setProfile();
+            if (user.username === fcUser?.farcaster?.username) {
+              if (user.address) {
+                if (user.address === address) {
+                  setIsLoading(true);
+                  setProfile();
+                } else {
+                  toast.error("Please connect your initial signed account", {
+                    style: {
+                      borderRadius: "10px",
+                    },
+                  });
+                }
+              } else {
+                setIsLoading(true);
+                setProfile();
+              }
+            } else {
+              toast.error("You are not authorized to set price", {
+                style: {
+                  borderRadius: "10px",
+                },
+              });
+            }
           }}
         />
       ) : (

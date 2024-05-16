@@ -23,6 +23,10 @@ export default function SetupProfile({ user }: { user: User }) {
   const setHeadshot = useSetAtom(headshotAtom);
   const auth = useAtomValue(authAtom);
 
+  if (auth !== "setup") {
+    router.push("/");
+  }
+
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
       Socials(
@@ -53,11 +57,6 @@ export default function SetupProfile({ user }: { user: User }) {
       setIsLoading(false);
     }
   }, [data, loading]);
-
-  if (auth !== "setup") {
-    router.push("/");
-    return null;
-  }
 
   return (
     <Layout>
