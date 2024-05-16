@@ -146,6 +146,7 @@ export default function AskQuestion({ user }: { user: User }) {
       creatorAddress,
       authorAddress: address as string,
       isAnswered: false,
+      whitelistedAddress: [],
     };
     setQuestions([question, ...questionsData]);
   };

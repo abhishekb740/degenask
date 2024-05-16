@@ -5,23 +5,28 @@ import TextArea from "../form/textarea";
 import { usePrivy } from "@privy-io/react-auth";
 import Button from "../form/button";
 import toast from "react-hot-toast";
-import { DegenAskABI, DegenAskContract } from "@/utils/constants";
+import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
 import { account, publicClient, walletClient } from "@/utils/config";
 import generateUniqueId from "generate-unique-id";
-import { userAtom } from "@/store";
+import { questionsAtom, userAtom } from "@/store";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import Connect from "../shared/connect";
+import { FiLock } from "react-icons/fi";
+import { formatEther, parseEther } from "viem";
 
 export default function Feed({ key, question }: { key: string; question: Question }) {
   const [answerContent, setAnswerContent] = useState<string>("");
   const [answer, setAnswer] = useState<Answer>();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>();
   const { user } = usePrivy();
   const { address } = useAccount();
   const profile = useAtomValue(userAtom);
   const setProfile = useSetAtom(userAtom);
+  const questions = useAtomValue(questionsAtom);
+  const setQuestions = useSetAtom(questionsAtom);
   const { data, writeContractAsync, status } = useWriteContract();
   const {
     isSuccess,
@@ -30,6 +35,150 @@ export default function Feed({ key, question }: { key: string; question: Questio
   } = useWaitForTransactionReceipt({
     hash: data,
   });
+  const {
+    data: unlockData,
+    writeContractAsync: writeUnlockContractAsync,
+    status: unlockStatus,
+  } = useWriteContract();
+  const {
+    isSuccess: isUnlockSuccess,
+    status: isUnlockValid,
+    isError: isUnlockTxError,
+  } = useWaitForTransactionReceipt({
+    hash: unlockData,
+  });
+  const {
+    data: approvalData,
+    writeContractAsync: writeApprovalContractAsync,
+    status: approvalStatus,
+  } = useWriteContract();
+  const {
+    isSuccess: isApprovalSuccess,
+    status: isApprovalValid,
+    isError: isApprovalTxError,
+  } = useWaitForTransactionReceipt({
+    hash: approvalData,
+  });
+
+  const getBalance = async () => {
+    if (address) {
+      try {
+        const balance = await publicClient.readContract({
+          address: TokenContract,
+          abi: TokenABI,
+          functionName: "balanceOf",
+          args: [address],
+        });
+        setBalance(Number(formatEther(balance as bigint)));
+      } catch (e) {
+        toast.error("Error fetching wallet balance", {
+          style: {
+            borderRadius: "10px",
+          },
+        });
+      }
+    } else {
+      setBalance(0);
+    }
+  };
+
+  const getApproval = async () => {
+    const price = question.price * 0.01;
+    writeApprovalContractAsync({
+      account: address,
+      address: TokenContract,
+      abi: TokenABI,
+      functionName: "approve",
+      args: [DegenAskContract, parseEther(String(price))],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
+
+  const unlockAnswer = async () => {
+    writeUnlockContractAsync({
+      account: address,
+      address: DegenAskContract,
+      abi: DegenAskABI,
+      functionName: "peekIntoAnswer",
+      args: [Number(question.questionId)],
+    }).catch((error) => {
+      setIsLoading(false);
+      toast.error("User rejected the request", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    });
+  };
+
+  const unlockStore = async () => {
+    const whitelistedAddresses: string[] = [...question.whitelistedAddresses, String(address)];
+    const response = await fetch("/api/setQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        questionId: question.questionId,
+        whitelistedAddresses,
+      }),
+    });
+    if (response.status === 200) {
+      toast.success("Saved successfully", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+    setIsLoading(false);
+    setQuestions((questions) => {
+      return questions.map((q) => {
+        if (q.questionId === question.questionId) {
+          return {
+            ...q,
+            whitelistedAddresses,
+          };
+        }
+        return q;
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (unlockStatus === "success" && isUnlockSuccess && isUnlockValid === "success") {
+      unlockStore();
+    } else if (isTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [unlockStatus, isUnlockSuccess, isUnlockTxError, isUnlockValid]);
+
+  useEffect(() => {
+    if (approvalStatus === "success" && isApprovalSuccess && isApprovalValid === "success") {
+      unlockAnswer();
+    } else if (isApprovalTxError) {
+      setIsLoading(false);
+      toast.error("Something went wrong", {
+        style: {
+          borderRadius: "10px",
+        },
+      });
+    }
+  }, [approvalStatus, isApprovalSuccess, isApprovalValid, isApprovalTxError]);
+
+  useEffect(() => {
+    getBalance();
+  }, [address]);
 
   const claimRefund = () => {
     setIsLoading(true);
@@ -194,7 +343,10 @@ export default function Feed({ key, question }: { key: string; question: Questio
           <span className="bg-[#A36EFD] text-white w-fit p-2 rounded-lg">Not answered</span>
         </div>
       )}
-      {answer && (address === question.authorAddress || address === question.creatorAddress) ? (
+      {answer &&
+      (address === question.authorAddress ||
+        address === question.creatorAddress ||
+        question.whitelistedAddresses.includes(String(address))) ? (
         <p className="text-neutral-800">{answer.content}</p>
       ) : (
         answer && (
@@ -210,10 +362,25 @@ export default function Feed({ key, question }: { key: string; question: Questio
                 <Button
                   id="button"
                   title={
-                    isLoading ? "Unlocking answer..." : `Unlock with ${question.price * 0.01} DEGEN`
+                    isLoading ? (
+                      "Unlocking answer..."
+                    ) : (
+                      <span className="inline-flex gap-2 items-center">
+                        <FiLock /> Unlock with ${question.price * 0.01} DEGEN
+                      </span>
+                    )
                   }
                   onClick={() => {
-                    //
+                    if (balance && Number(balance) >= question.price * 0.01) {
+                      setIsLoading(true);
+                      getApproval();
+                    } else {
+                      toast.error("Insufficient balance", {
+                        style: {
+                          borderRadius: "10px",
+                        },
+                      });
+                    }
                   }}
                 />
               ) : (

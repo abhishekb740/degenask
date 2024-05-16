@@ -3,8 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { questionId, content, creatorUsername, creatorAddress, authorAddress, price, isAnswered } =
-    body;
+  const {
+    questionId,
+    content,
+    creatorUsername,
+    creatorAddress,
+    authorAddress,
+    price,
+    isAnswered,
+    whitelistedAddresses,
+  } = body;
 
   try {
     const existingQuestion = await client
@@ -16,6 +24,7 @@ export async function POST(req: NextRequest) {
         .from("farstackQuestions")
         .update({
           isAnswered,
+          whitelistedAddresses,
         })
         .eq("questionId", questionId);
       if (response.error) {

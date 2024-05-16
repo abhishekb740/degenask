@@ -18,6 +18,7 @@ export interface Question {
   creatorAddress: string;
   authorAddress: string;
   isAnswered: boolean;
+  whitelistedAddresses: string[];
 }
 
 export type Questions = Question[];
