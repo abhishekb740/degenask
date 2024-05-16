@@ -31,15 +31,10 @@ const OGs = [
 
 export default function Hero({ users }: { users: User[] }) {
   const router = useRouter();
-  // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { ready, authenticated, user, createWallet } = usePrivy();
   const setAuth = useSetAtom(authAtom);
   const { wallets } = useWallets();
-
-  // const toggleDropdown = () => {
-  //   setIsDropdownOpen((prevState) => !prevState);
-  // };
 
   const setProfile = async () => {
     const response = await fetch("/api/setCreator", {
@@ -92,15 +87,9 @@ export default function Hero({ users }: { users: User[] }) {
     },
   });
 
-  // const { logout } = useLogout({
-  //   onSuccess: () => {
-  //     setIsLoggedIn(false);
-  //   },
-  // });
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-20 bg-[#4C2897]">
-      <Header color="white" />
+      <div className="my-20 text-white text-2xl font-title">degenask.me</div>
       <h1 className="text-[3rem] text-center font-primary font-semibold text-neutral-200">
         Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
       </h1>
@@ -121,23 +110,6 @@ export default function Hero({ users }: { users: User[] }) {
               {user?.farcaster?.username}
             </span>
           </button>
-          {/* <div
-            className={`${
-              isDropdownOpen ? "block absolute" : "hidden"
-            }  mt-1 z-10 divide-y divide-gray-100 rounded-lg shadow w-44 bg-neutral-100 font-primary`}
-          >
-            <ul className="py-1 text-sm text-neutral-700" aria-labelledby="dropdown-button">
-              <li>
-                <button
-                  type="button"
-                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-300 hover:text-neutral-800"
-                  onClick={logout}
-                >
-                  Logout
-                </button>
-              </li>
-            </ul>
-          </div> */}
         </div>
       )}
       <div className="flex flex-col gap-10">

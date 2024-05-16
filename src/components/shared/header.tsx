@@ -22,7 +22,7 @@ export default function Header({ color }: { color: string }) {
     <div className="w-full flex flex-col md:flex-row items-center justify-between mt-20 mb-20">
       <span></span>
       <div className={`text-${color} text-2xl font-title`}>degenask.me</div>
-      {authenticated && (
+      {authenticated ? (
         <div
           className="relative flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl"
           onClick={toggleDropdown}
@@ -47,6 +47,8 @@ export default function Header({ color }: { color: string }) {
             </ul>
           </div>
         </div>
+      ) : (
+        <span></span>
       )}
     </div>
   );
