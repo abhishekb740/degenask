@@ -7,8 +7,8 @@ import { DegenAskABI, DegenAskContract } from "@/utils/constants";
 import { parseEther } from "viem";
 import toast from "react-hot-toast";
 import type { User } from "@/types";
-import { userAtom } from "@/store";
-import { useSetAtom } from "jotai";
+import { authMethodAtom, userAtom } from "@/store";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 
@@ -23,6 +23,7 @@ export default function SetProfile({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setUser = useSetAtom(userAtom);
   const router = useRouter();
+  const authMethod = useAtomValue(authMethodAtom);
   const { user: fcUser } = usePrivy();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const { data, writeContractAsync, status } = useWriteContract();
@@ -134,42 +135,61 @@ export default function SetProfile({ user }: { user: User }) {
         value={fees}
         suffix={`DEGEN ${fees ? `(${(fees * 0.014).toFixed(2)} USD)` : ``}`}
       />
-      {isPageLoading ? (
-        <Button id="setPrice" title="Create a Page" />
-      ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
-        <Button
-          id="setPrice"
-          title={isLoading ? "Creating page..." : "Create a Page"}
-          disabled={isLoading || !fees}
-          onClick={() => {
-            if (user.username === fcUser?.farcaster?.username) {
-              if (user.address) {
-                if (user.address === address) {
+      <div className="inline-flex gap-4 items-center">
+        {isPageLoading ? (
+          <Button id="setPrice" title={authMethod === "initial" ? "Create a Page" : "Save price"} />
+        ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
+          <Button
+            id="setPrice"
+            title={
+              authMethod === "initial"
+                ? isLoading
+                  ? "Creating page..."
+                  : "Create a Page"
+                : isLoading
+                  ? "Saving..."
+                  : "Save price"
+            }
+            disabled={isLoading || !fees}
+            onClick={() => {
+              if (user.username === fcUser?.farcaster?.username) {
+                if (user.address) {
+                  if (user.address === address) {
+                    setIsLoading(true);
+                    setProfile();
+                  } else {
+                    toast.error("Please connect your initial signed account", {
+                      style: {
+                        borderRadius: "10px",
+                      },
+                    });
+                  }
+                } else {
                   setIsLoading(true);
                   setProfile();
-                } else {
-                  toast.error("Please connect your initial signed account", {
-                    style: {
-                      borderRadius: "10px",
-                    },
-                  });
                 }
               } else {
-                setIsLoading(true);
-                setProfile();
+                toast.error("You are not authorized to set price", {
+                  style: {
+                    borderRadius: "10px",
+                  },
+                });
               }
-            } else {
-              toast.error("You are not authorized to set price", {
-                style: {
-                  borderRadius: "10px",
-                },
-              });
-            }
-          }}
-        />
-      ) : (
-        <Connect />
-      )}
+            }}
+          />
+        ) : (
+          <Connect />
+        )}
+        {authMethod === "edit" && (
+          <Button
+            id="cancel"
+            title="Go back"
+            onClick={() => {
+              router.push(`/${user.username}`);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }

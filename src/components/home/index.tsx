@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import FarcasterIcon from "@/icons/farcaster";
 import toast from "react-hot-toast";
 import { User } from "@/types";
-import Header from "../shared/header";
 import { useSetAtom } from "jotai";
-import { authAtom } from "@/store";
+import { authAtom, authMethodAtom } from "@/store";
 
 const OGs = [
   {
@@ -34,6 +33,7 @@ export default function Hero({ users }: { users: User[] }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { ready, authenticated, user, createWallet } = usePrivy();
   const setAuth = useSetAtom(authAtom);
+  const setAuthMethod = useSetAtom(authMethodAtom);
   const { wallets } = useWallets();
 
   const setProfile = async () => {
@@ -54,6 +54,7 @@ export default function Hero({ users }: { users: User[] }) {
         },
       });
       setAuth("setup");
+      setAuthMethod("initial");
       router.push("/setup");
     }
   };

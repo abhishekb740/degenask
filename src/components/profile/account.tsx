@@ -2,7 +2,7 @@
 "use client";
 import Button from "@/components/form/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { authAtom, headshotAtom } from "@/store";
+import { authAtom, authMethodAtom, headshotAtom } from "@/store";
 import { User } from "@/types";
 import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ export default function Account({ user }: { user: User }) {
   const headshotData = useAtomValue(headshotAtom);
   const { name } = headshotData;
   const setAuth = useSetAtom(authAtom);
+  const setAuthMethod = useSetAtom(authMethodAtom);
   const router = useRouter();
 
   return (
@@ -22,6 +23,7 @@ export default function Account({ user }: { user: User }) {
           className="flex flex-row gap-2 w-fit text-neutral-600 hover:text-neutral-800 items-center justify-center"
           onClick={() => {
             setAuth("setup");
+            setAuthMethod("edit");
             router.push(`/setup/${creatorUsername}`);
           }}
         >
