@@ -6,185 +6,104 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
 import { init, useQuery } from "@airstack/airstack-react";
 import type { Profile, Questions, User } from "@/types";
-import { feedAtom, headshotAtom, questionsAtom, userAtom } from "@/store";
-import Button from "@/components/form/button";
+import { headshotAtom, questionsAtom, userAtom } from "@/store";
 import dynamic from "next/dynamic";
 import AskSkeleton from "./skeleton/ask";
-import FeedSkeleton from "./skeleton/feed";
-import SetupSkeleton from "./skeleton/setup";
-import { IoMdArrowBack } from "react-icons/io";
-import FarcasterIcon from "@/icons/farcaster";
-import { IoIosSearch } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import Layout from "../layout";
+import HeadshotSkeleton from "../shared/skeletons/headshot";
+import Account from "./account";
+import Feed from "./feed";
+import FeedSkeleton from "./skeleton/feed";
 
-const AskQuestion = dynamic(() => import("@/components/profile/ask"), {
+const Ask = dynamic(() => import("@/components/profile/ask"), {
   loading: () => <AskSkeleton />,
 });
 
-const Feed = dynamic(() => import("@/components/profile/feed"), {
-  loading: () => <FeedSkeleton />,
+const Headshot = dynamic(() => import("@/components/shared/headsot"), {
+  loading: () => <HeadshotSkeleton />,
 });
 
-const Setup = dynamic(() => import("@/components/profile/setup"), {
-  loading: () => <SetupSkeleton />,
-});
-
-export default function Profile({
-  user: profile,
-  questions,
-  users,
-}: {
-  user: User;
-  questions: Questions;
-  users: User[];
-}) {
+export default function Profile({ user, questions: posts }: { user: User; questions: Questions }) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const feed = useAtomValue(feedAtom);
-  const setFeed = useSetAtom(feedAtom);
-  const profileData = useAtomValue(userAtom);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const setUser = useSetAtom(userAtom);
-  const headshotData = useAtomValue(headshotAtom);
   const setHeadshot = useSetAtom(headshotAtom);
-  const questionsData = useAtomValue(questionsAtom);
+  const questions = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
-  const { username, address, price, count } = profile;
+  const { username, address, price } = user;
   const { user: fcUser } = usePrivy();
 
   init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
   const query = `query MyQuery {
-    Socials(
-      input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${username}"}}, blockchain: ethereum}
-    ) {
-      Social {
-        profileBio
-        profileDisplayName
-        profileImage
-        followerCount
+      Socials(
+        input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${user.username}"}}, blockchain: ethereum}
+      ) {
+        Social {
+          profileBio
+          profileDisplayName
+          profileImage
+          followingCount
+          followerCount
+        }
       }
-    }
-  }`;
+    }`;
 
   const { data, loading } = useQuery(query);
 
-  const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setHeadshot({
-  //       username,
-  //       name: data.Socials.Social[0].profileDisplayName,
-  //       bio: data.Socials.Social[0].profileBio,
-  //       followers: data.Socials.Social[0].followerCount,
-  //       image: data.Socials.Social[0].profileImage,
-  //       count,
-  //     });
-  //   }
-  // }, [data, loading, username, count]);
+  useEffect(() => {
+    if (data) {
+      setHeadshot({
+        username: user.username,
+        name: data.Socials.Social[0].profileDisplayName,
+        bio: data.Socials.Social[0].profileBio,
+        image: data.Socials.Social[0].profileImage,
+        followers: data.Socials.Social[0].followerCount,
+        followings: data.Socials.Social[0].followingCount,
+      });
+      setIsLoading(false);
+    }
+  }, [data, loading]);
 
   useEffect(() => {
     if (address === null || price === null) {
       if (username === fcUser?.farcaster?.username) {
-        setFeed("setup");
+        router.push(`/setup/${user.username}`);
       }
-    } else {
-      setFeed("feed");
     }
   }, [address, price]);
 
   useEffect(() => {
-    setUser({ user: profile });
-    setQuestions(questions);
-  }, [profile, questions]);
+    setUser(user);
+    setQuestions(posts);
+  }, [user, posts]);
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center px-3 sm:px-10">
-      <div className="relative bg-[white] p-4 md:p-8 w-full sm:w-2/3 lg:w-2/4 max-h-[45rem] font-primary rounded-xl border border-neutral-400/60 shadow-xl">
-        {!loading && feed !== "feed" && (
-          <div
-            onClick={() => setFeed("feed")}
-            className="cursor-pointer items-center flex flex-row w-fit text-sm text-neutral-700 gap-2 transition-transform duration-300 ease-in-out hover:scale-110"
-          >
-            <IoMdArrowBack size={25} />
-            <div>Go Back</div>
-          </div>
-        )}
-        {loading ? (
-          <div className="w-full h-10 bg-gray-300 rounded-[5rem] mb-4 animate-pulse"></div>
+    <Layout>
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl">
+        {isLoading ? <HeadshotSkeleton /> : <Headshot />}
+        {isLoading ? (
+          <AskSkeleton />
+        ) : fcUser?.farcaster?.username === user.username ? (
+          <Account user={user} />
         ) : (
-          feed === "feed" && (
-            <div className="flex flex-row items-center w-full rounded-[5rem] py-1 border border-neutral-300 px-5 mb-4">
-              <IoIosSearch size={30} className="text-neutral-400" />
-              <input
-                className="flex ml-4 w-full py-2 focus:outline-none"
-                placeholder="Discover Creators"
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          )
+          <Ask user={user} />
         )}
-        {searchQuery && (
-          <div className="flex flex-col z-10 absolute max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-[90.7%] rounded-lg shadow-lg scroll-smooth scrollbar">
-            {filteredUsers.length ? (
-              filteredUsers.map((user) => {
-                return (
-                  <button
-                    key={user.username}
-                    className="flex flex-row gap-3 hover:bg-neutral-200 items-center w-full px-5 py-2 cursor-pointer"
-                    onClick={() => router.push(`/${user.username}`)}
-                  >
-                    <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
-                    <p className="text-lg font-primary">{user.username}</p>
-                  </button>
-                );
-              })
-            ) : (
-              <p className="ml-4 text-lg py-2 text-neutral-800 font-primary">No Creators Found</p>
-            )}
-          </div>
-        )}
-        {loading ? (
-          <div className="w-full h-10 bg-indigo-200 rounded-lg animate-pulse"></div>
-        ) : (
-          feed === "feed" &&
-          (fcUser?.farcaster?.username !== username ? (
-            <Button
-              id="button"
-              title="Ask a question"
-              onClick={() => {
-                setFeed("ask");
-              }}
-            />
-          ) : (
-            <Button
-              id="button"
-              title={
-                <p className="flex flex-row gap-5 justify-center items-center">
-                  <FarcasterIcon className="w-5 h-5" color="#ffffff" /> Share your profile
-                </p>
-              }
-              onClick={() => {
-                window.open(
-                  `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me%20and%20earn%20$DEGEN%20for%20your%20questions!%0A&embeds[]=${process.env.NEXT_PUBLIC_HOST_URL}/${username}/`,
-                );
-              }}
-            />
-          ))
-        )}
-        <div className="mt-2">
-          {!loading && feed === "setup" ? (
-            <Setup user={profileData.user} />
-          ) : feed === "ask" ? (
-            <AskQuestion
-              creatorUsername={username}
-              creatorAddress={profileData.user.address}
-              price={profileData.user.price}
-            />
-          ) : (
-            headshotData && <Feed questions={questionsData} />
-          )}
-        </div>
       </div>
-    </div>
+      <span className="flex w-full items-start justify-start mt-14 mb-5">
+        <h2 className="text-2xl font-title font-medium">Recent Q&A</h2>
+      </span>
+      {isLoading ? (
+        <FeedSkeleton />
+      ) : questions.length > 0 ? (
+        questions.map((question) => {
+          return <Feed key={question.questionId} question={question} />;
+        })
+      ) : (
+        <p className="w-full text-start text-neutral-500">
+          No question asked yet. You can be the first 👀
+        </p>
+      )}
+    </Layout>
   );
 }

@@ -8,10 +8,10 @@ export async function POST(req: NextRequest) {
     content,
     creatorUsername,
     creatorAddress,
-    authorUsername,
     authorAddress,
     price,
     isAnswered,
+    whitelistedAddresses,
   } = body;
 
   try {
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
         .from("farstackQuestions")
         .update({
           isAnswered,
+          whitelistedAddresses,
         })
         .eq("questionId", questionId);
       if (response.error) {
@@ -35,7 +36,6 @@ export async function POST(req: NextRequest) {
         content,
         creatorUsername,
         creatorAddress,
-        authorUsername,
         authorAddress,
         price,
         isAnswered,

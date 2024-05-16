@@ -25,7 +25,7 @@ const TextArea = ({
     <div>
       <label
         htmlFor={id}
-        className="text-neutral-600 text-sm md:text-lg"
+        className="text-neutral-500 text-sm md:text-lg"
         style={{ marginRight: 0 }}
       >
         {label}
@@ -34,7 +34,7 @@ const TextArea = ({
         id={id}
         name={name}
         onChange={onChange}
-        className="mt-2 bg-[#eaeaea] font-primary border border-neutral-400 text-neutral-800 text-sm placeholder:text-neutral-500 rounded-lg focus:border-neutral-300 focus:ring-neutral-300 active:border-neutral-400 active:ring-neutral-400 block w-full p-2.5 disabled:cursor-not-allowed"
+        className="mt-2 min-h-[7rem] bg-[#F6F6F6] font-primary text-neutral-800 text-sm placeholder:text-neutral-500 rounded-xl focus:outline-none block w-full py-3 px-6 disabled:cursor-not-allowed"
         placeholder={placeholder}
         value={value}
         disabled={disabled}

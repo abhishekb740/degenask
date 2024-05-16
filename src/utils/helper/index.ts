@@ -1,3 +1,13 @@
+export function formatAddress(address: string): string {
+  if (address.length <= 8) {
+    return address;
+  } else {
+    const firstPart = address.substring(0, 4);
+    const lastPart = address.substring(address.length - 4);
+    return `${firstPart}...${lastPart}`;
+  }
+}
+
 export function calculateDeadline(createdAt: string): string {
   const createdAtDate = new Date(createdAt);
   if (isNaN(createdAtDate.getTime())) {

@@ -37,7 +37,7 @@ export default function Connect() {
                     onClick={openChainModal}
                     type="button"
                   >
-                    Wrong network
+                    Change network
                   </button>
                 );
               }

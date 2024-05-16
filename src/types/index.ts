@@ -1,6 +1,5 @@
 export interface User {
   username: string;
-  fid: number;
   count: number;
   address: string;
   price: number;
@@ -14,12 +13,12 @@ export interface Question {
   questionId: string;
   content: string;
   creatorUsername: string;
-  authorUsername: string;
   price: number;
   createdAt: string;
   creatorAddress: string;
   authorAddress: string;
   isAnswered: boolean;
+  whitelistedAddresses: string[];
 }
 
 export type Questions = Question[];
