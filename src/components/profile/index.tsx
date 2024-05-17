@@ -4,8 +4,7 @@
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
-import { init, useQuery } from "@airstack/airstack-react";
-import type { Profile, Questions, User } from "@/types";
+import type { Profile, Questions, User, UserData } from "@/types";
 import { headshotAtom, questionsAtom, userAtom } from "@/store";
 import dynamic from "next/dynamic";
 import AskSkeleton from "./skeleton/ask";
@@ -24,7 +23,15 @@ const Headshot = dynamic(() => import("@/components/shared/headsot"), {
   loading: () => <HeadshotSkeleton />,
 });
 
-export default function Profile({ user, questions: posts }: { user: User; questions: Questions }) {
+export default function Profile({
+  user,
+  profile,
+  questions: posts,
+}: {
+  user: User;
+  profile: UserData;
+  questions: Questions;
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setUser = useSetAtom(userAtom);
@@ -33,37 +40,6 @@ export default function Profile({ user, questions: posts }: { user: User; questi
   const setQuestions = useSetAtom(questionsAtom);
   const { username, address, price } = user;
   const { user: fcUser } = usePrivy();
-
-  init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY!);
-  const query = `query MyQuery {
-      Socials(
-        input: {filter: {dappName: {_eq: farcaster}, profileName: {_eq: "${user.username}"}}, blockchain: ethereum}
-      ) {
-        Social {
-          profileBio
-          profileDisplayName
-          profileImage
-          followingCount
-          followerCount
-        }
-      }
-    }`;
-
-  const { data, loading } = useQuery(query);
-
-  useEffect(() => {
-    if (data) {
-      setHeadshot({
-        username: user.username,
-        name: data.Socials.Social[0].profileDisplayName,
-        bio: data.Socials.Social[0].profileBio,
-        image: data.Socials.Social[0].profileImage,
-        followers: data.Socials.Social[0].followerCount,
-        followings: data.Socials.Social[0].followingCount,
-      });
-      setIsLoading(false);
-    }
-  }, [data, loading]);
 
   useEffect(() => {
     if (address === null || price === null) {
@@ -76,7 +52,16 @@ export default function Profile({ user, questions: posts }: { user: User; questi
   useEffect(() => {
     setUser(user);
     setQuestions(posts);
-  }, [user, posts]);
+    setHeadshot({
+      username: user.username,
+      name: profile.name,
+      bio: profile.bio,
+      image: profile.image,
+      followers: profile.followers,
+      followings: profile.followings,
+    });
+    setIsLoading(false);
+  }, [user, posts, profile]);
 
   return (
     <Layout>

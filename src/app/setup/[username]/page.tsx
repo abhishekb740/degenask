@@ -1,3 +1,6 @@
+import { getUserData } from "@/app/_actions/queries";
+import { User } from "@/types";
+import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -9,10 +12,11 @@ type Props = {
   };
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const profile = await getUserData(params.username);
   return {
     title: `Setup | DegenAsk`,
-    icons: "/favicon.png",
+    icons: profile.Socials.Social[0].profileImage,
     description:
       "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
     openGraph: {
@@ -37,15 +41,29 @@ const SetupProfile = dynamic(() => import("@/components/setup"), {
 });
 
 export default async function Setup({ params }: Props) {
-  const user = await fetch(
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/getCreator?username=${params.username}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  const response = await user.json();
-  return <SetupProfile user={response?.data[0]} />;
+  try {
+    const { data: user } = await client
+      .from("farstackUser")
+      .select("*")
+      .eq("username", params.username);
+    if (user?.[0]) {
+      return <SetupProfile user={user?.[0] as User} />;
+    } else {
+      return (
+        <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+          <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
+            404: User not found
+          </h1>
+        </main>
+      );
+    }
+  } catch (e) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+        <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
+          404: User not found
+        </h1>
+      </main>
+    );
+  }
 }

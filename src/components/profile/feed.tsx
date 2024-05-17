@@ -25,7 +25,6 @@ export default function Feed({ key, question }: { key: string; question: Questio
   const { address } = useAccount();
   const profile = useAtomValue(userAtom);
   const setProfile = useSetAtom(userAtom);
-  const questions = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
   const { data, writeContractAsync, status } = useWriteContract();
   const {

@@ -29,6 +29,12 @@ export default async function Home() {
     const { data } = await client.from("farstackUser").select("*");
     return <Hero users={data as User[]} />;
   } catch (e) {
-    return null;
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+        <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
+          404: Page not found
+        </h1>
+      </main>
+    );
   }
 }
