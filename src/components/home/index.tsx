@@ -83,7 +83,10 @@ export default function Hero({ users }: { users: User[] }) {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-10 md:px-20 bg-[#4C2897]">
-      <div className="mt-10 mb-20 text-white text-2xl font-title">degenask.me</div>
+      <span className="flex flex-row gap-2 items-center justify-center mt-10 mb-20">
+        <img src="/degenask.png" className="w-6 h-6 object-cover" alt="logo" />
+        <p className="text-white text-2xl font-title">degenask.me</p>
+      </span>
       <h1 className="text-[2rem] md:text-[3rem] text-center font-primary font-semibold text-neutral-200">
         Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
       </h1>

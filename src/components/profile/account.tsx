@@ -48,7 +48,7 @@ export default function Account({ user }: { user: User }) {
         title="Share the Page"
         onClick={() => {
           window.open(
-            `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me/${creatorUsername}%20and%20earn%20$DEGEN%20for%20your%20questions!%0A&embeds[]=${process.env.NEXT_PUBLIC_HOST_URL}/${creatorUsername}`,
+            `https://warpcast.com/~/compose?text=Ask%20me%20anything%20on%20degenask.me/${creatorUsername}%20and%20earn%20$DEGEN%20for%20your%20questions`,
             "_blank",
           );
         }}
