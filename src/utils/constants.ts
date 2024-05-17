@@ -1,7 +1,112 @@
-export const DegenAskContract = "0x52CdED3dE068280956B3aed817644A6D7EAc6c5b";
-export const TokenContract = "0x052B67B4c458F344B3f32524AeE00Bd95aEc9e68";
+export const DegenAskContract = "0x76bD548920EcF0f649dC87020fa307F0c94F917f";
+export const TokenContract = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed";
 
 export const DegenAskABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_admin",
+        type: "address",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_token",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "questionId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "userAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "PaymentRefunded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "questionId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "creatorAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "PaymentReleased",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "questionId",
+        type: "uint256",
+      },
+    ],
+    name: "QuestionAnswered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "questionId",
+        type: "uint256",
+      },
+    ],
+    name: "QuestionAsked",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "admin",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
   {
     inputs: [
       {
@@ -120,137 +225,6 @@ export const DegenAskABI = [
     inputs: [
       {
         internalType: "address",
-        name: "_admin",
-        type: "address",
-      },
-      {
-        internalType: "contract IERC20",
-        name: "_token",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "questionId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "userAddress",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "PaymentRefunded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "questionId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "creatorAddress",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "PaymentReleased",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_questionId",
-        type: "uint256",
-      },
-    ],
-    name: "peekIntoAnswer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "questionId",
-        type: "uint256",
-      },
-    ],
-    name: "QuestionAnswered",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "questionId",
-        type: "uint256",
-      },
-    ],
-    name: "QuestionAsked",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_questionId",
-        type: "uint256",
-      },
-    ],
-    name: "refundPayment",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "admin",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "_creator",
         type: "address",
       },
@@ -264,6 +238,19 @@ export const DegenAskABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_questionId",
+        type: "uint256",
+      },
+    ],
+    name: "peekIntoAnswer",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -321,6 +308,19 @@ export const DegenAskABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_questionId",
+        type: "uint256",
+      },
+    ],
+    name: "refundPayment",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
