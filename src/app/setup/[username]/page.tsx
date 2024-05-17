@@ -13,7 +13,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const profile = await getUserData(params.username);
+  const username = params.username;
+  const profile = await getUserData(username);
   return {
     title: `Setup | DegenAsk`,
     icons: profile.Socials.Social[0].profileImage,
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: process.env.NEXT_PUBLIC_HOST_URL,
       siteName: "DegenAsk",
       images: {
-        url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.svg`,
+        url: `${process.env.NEXT_PUBLIC_HOST_URL}/api/getOg?username=${username}`,
         alt: "DegenAsk",
       },
     },
