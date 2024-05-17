@@ -126,6 +126,7 @@ export const setQuestion = async (
     authorAddress: address,
     isAnswered: false,
     price,
+    whitelistedAddresses: [],
   });
   const options = {
     method: "POST",
