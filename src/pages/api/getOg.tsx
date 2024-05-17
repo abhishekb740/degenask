@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { getUserData } from "@/app/_actions/queries";
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
@@ -27,10 +28,11 @@ export default async function GET(request: NextRequest) {
           }}
           tw="flex items-center justify-center p-8 w-full min-h-screen"
         >
-          <img src={pfp} tw="w-52 h-52 bg-white p-2 rounded-full" />
+          <img src={pfp} tw="w-52 h-52 bg-white p-2 rounded-full" alt="pfp" />
           <img
             src="https://i.ibb.co/86v435d/og-nit.png"
             tw="absolute w-60 h-36 bottom-3 right-28"
+            alt="tag"
           />
         </div>
       ),
