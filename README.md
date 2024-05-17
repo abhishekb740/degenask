@@ -1,6 +1,6 @@
 # DegenAsk
 
-<img alt="DegenAsk" src="public/favicon.png"  width="100" height="100"/>
+<img alt="DegenAsk" src="public/degenask.png"  width="100" height="100"/>
 
 Social Q&A app on Base where answers can make money for you. Pay to ask & earn when others peek into the answers.
 

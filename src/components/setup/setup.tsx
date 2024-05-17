@@ -11,6 +11,7 @@ import { authMethodAtom, userAtom } from "@/store";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { updateCreator } from "@/app/_actions/queries";
 
 const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
@@ -74,18 +75,8 @@ export default function SetProfile({ user }: { user: User }) {
   };
 
   const store = async () => {
-    const response = await fetch("/api/setCreator", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        address,
-        price: fees,
-      }),
-    });
-    if (response.status === 200) {
+    const response = await updateCreator(username, String(address), fees!);
+    if (response.status === 204) {
       toast.success("Saved successfully", {
         style: {
           borderRadius: "10px",
@@ -117,7 +108,6 @@ export default function SetProfile({ user }: { user: User }) {
 
   useEffect(() => {
     setIsPageLoading(false);
-    console.log(chainId);
   }, []);
 
   return (
@@ -178,7 +168,7 @@ export default function SetProfile({ user }: { user: User }) {
             }}
           />
         ) : (
-          <Connect />
+          <Connect label={`${authMethod === "initial" ? "Create a Page" : "Save price"}`} />
         )}
         {authMethod === "edit" && (
           <Button

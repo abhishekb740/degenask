@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { usePrivy } from "@privy-io/react-auth";
 import type { Profile, Questions, User, UserData } from "@/types";
-import { headshotAtom, questionsAtom, userAtom } from "@/store";
+import { authAtom, authMethodAtom, headshotAtom, questionsAtom, userAtom } from "@/store";
 import dynamic from "next/dynamic";
 import AskSkeleton from "./skeleton/ask";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,8 @@ export default function Profile({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setUser = useSetAtom(userAtom);
   const setHeadshot = useSetAtom(headshotAtom);
+  const setAuth = useSetAtom(authAtom);
+  const setAuthMethod = useSetAtom(authMethodAtom);
   const questions = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
   const { username, address, price } = user;
@@ -44,6 +46,8 @@ export default function Profile({
   useEffect(() => {
     if (address === null || price === null) {
       if (username === fcUser?.farcaster?.username) {
+        setAuth("setup");
+        setAuthMethod("edit");
         router.push(`/setup/${user.username}`);
       }
     }
@@ -65,7 +69,7 @@ export default function Profile({
 
   return (
     <Layout>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl">
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-40">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         {isLoading ? (
           <AskSkeleton />

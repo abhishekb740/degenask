@@ -1,6 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-export default function Connect() {
+export default function Connect({ label }: { label: string }) {
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
@@ -26,7 +26,7 @@ export default function Connect() {
                     onClick={openConnectModal}
                     type="button"
                   >
-                    Connect Wallet
+                    {label}
                   </button>
                 );
               }

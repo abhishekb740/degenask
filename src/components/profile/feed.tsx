@@ -6,7 +6,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import Button from "../form/button";
 import toast from "react-hot-toast";
 import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
-import { account, publicClient, walletClient } from "@/utils/config";
+import { publicClient } from "@/utils/config";
 import generateUniqueId from "generate-unique-id";
 import { questionsAtom, userAtom } from "@/store";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -14,10 +14,18 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import Connect from "../shared/connect";
 import { FiLock } from "react-icons/fi";
 import { formatEther, parseEther } from "viem";
+import {
+  getAnswers,
+  setAnswer,
+  signAnswer,
+  updateCount,
+  updateStatus,
+  updateWhitelist,
+} from "@/app/_actions/queries";
 
 export default function Feed({ key, question }: { key: string; question: Question }) {
   const [answerContent, setAnswerContent] = useState<string>("");
-  const [answer, setAnswer] = useState<Answer>();
+  const [answer, setAnswers] = useState<Answer>();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>();
@@ -118,17 +126,8 @@ export default function Feed({ key, question }: { key: string; question: Questio
 
   const unlockStore = async () => {
     const whitelistedAddresses: string[] = [...question.whitelistedAddresses, String(address)];
-    const response = await fetch("/api/setQuestion", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        questionId: question.questionId,
-        whitelistedAddresses,
-      }),
-    });
-    if (response.status === 200) {
+    const response = await updateWhitelist(question.questionId, whitelistedAddresses);
+    if (response.status === 204) {
       toast.success("Saved successfully", {
         style: {
           borderRadius: "10px",
@@ -199,17 +198,8 @@ export default function Feed({ key, question }: { key: string; question: Questio
 
   const updateUser = async () => {
     const count = profile.count + 1;
-    const response = await fetch("/api/setCreator", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: profile.username,
-        count,
-      }),
-    });
-    if (response.status === 200) {
+    const response = await updateCount(profile.username, count);
+    if (response.status === 204) {
       toast.success("Saved successfully", {
         style: {
           borderRadius: "10px",
@@ -231,30 +221,15 @@ export default function Feed({ key, question }: { key: string; question: Questio
       useLetters: false,
       useNumbers: true,
     });
-    const response = await fetch("/api/setAnswer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        answerId,
-        questionId: question.questionId,
-        content: answerContent,
-        creatorUsername: question.creatorUsername,
-      }),
-    });
-    if (response.status === 200) {
-      const questionResponse = await fetch("/api/setQuestion", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questionId: question.questionId,
-          isAnswered: true,
-        }),
-      });
-      if (questionResponse.status === 200) {
+    const response = await setAnswer(
+      question.questionId,
+      answerContent,
+      user?.farcaster?.username as string,
+      answerId,
+    );
+    if (response.status === 201) {
+      const questionResponse = await updateStatus(question.questionId);
+      if (questionResponse.status === 204) {
         updateUser();
       }
     }
@@ -263,19 +238,10 @@ export default function Feed({ key, question }: { key: string; question: Questio
 
   const submitAnswer = async () => {
     const questionId = question.questionId;
-    try {
-      const { request }: any = await publicClient.simulateContract({
-        account,
-        address: DegenAskContract,
-        abi: DegenAskABI,
-        functionName: "answerQuestion",
-        args: [questionId],
-      });
-      const transaction = await walletClient.writeContract(request);
-      if (transaction) {
-        store();
-      }
-    } catch (error) {
+    const response = await signAnswer(questionId);
+    if (response?.status === 200) {
+      store();
+    } else {
       setIsLoading(false);
       toast.error("An error occurred while submitting your answer. Please try again.", {
         style: {
@@ -286,17 +252,8 @@ export default function Feed({ key, question }: { key: string; question: Questio
   };
 
   const fetchAnswer = async () => {
-    const answer = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST_URL}/api/getAnswer?questionId=${question.questionId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    const response = await answer.json();
-    if (response?.data[0]) setAnswer(response?.data[0]);
+    const answer = await getAnswers(question.questionId);
+    if (answer) setAnswers(answer?.[0]);
   };
 
   useEffect(() => {
@@ -360,7 +317,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                 <Button id="peek" title={`Unlock with ${question.price * 0.01} DEGEN`} />
               ) : address ? (
                 <Button
-                  id="button"
+                  id="peek"
                   title={
                     isLoading ? (
                       "Unlocking answer..."
@@ -384,7 +341,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                   }}
                 />
               ) : (
-                <Connect />
+                <Connect label={`Unlock with ${question.price * 0.01} DEGEN`} />
               )}
             </span>
           </div>
@@ -397,7 +354,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
           <Button id="claim" title="Claim refund" />
         ) : address ? (
           <Button
-            id="button"
+            id="claim"
             title={isLoading ? "Processing refund..." : "Claim Refund"}
             onClick={() => {
               if (address === question.authorAddress) {
@@ -412,7 +369,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
             }}
           />
         ) : (
-          <Connect />
+          <Connect label="Claim refund" />
         ))}
       {!question.isAnswered &&
         user?.farcaster?.username === question.creatorUsername &&
@@ -427,10 +384,10 @@ export default function Feed({ key, question }: { key: string; question: Questio
               onChange={(e) => setAnswerContent(e.target.value)}
             />
             {isPageLoading ? (
-              <Button id="askQuestion" title="Ask question" />
+              <Button id="submit" title="Submit answer" />
             ) : address ? (
               <Button
-                id="button"
+                id="submit"
                 title={isLoading ? "Submitting answer..." : "Submit answer"}
                 disabled={isLoading}
                 onClick={() => {
@@ -439,7 +396,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                 }}
               />
             ) : (
-              <Connect />
+              <Connect label="Submit answer" />
             )}
           </div>
         )}

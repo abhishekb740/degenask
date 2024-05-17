@@ -1,8 +1,7 @@
 import { Questions, User } from "@/types";
-import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getUserData } from "../_actions/queries";
+import { getQuestions, getUser, getUserData } from "../_actions/queries";
 
 type Props = {
   params: {
@@ -43,14 +42,8 @@ const Profile = dynamic(() => import("@/components/profile"), {
 
 export default async function Creator({ params }: Props) {
   try {
-    const { data: user } = await client
-      .from("farstackUser")
-      .select("*")
-      .eq("username", params.username);
-    const { data: questions } = await client
-      .from("farstackQuestions")
-      .select("*")
-      .eq("creatorUsername", params.username);
+    const user = await getUser(params.username);
+    const questions = await getQuestions(params.username);
     const profile = await getUserData(params.username);
     if (user?.[0] && questions && profile) {
       return (

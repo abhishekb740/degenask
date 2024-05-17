@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "DegenAsk",
   description:
     "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
-  icons: "/favicon.png",
+  icons: "/degenask.png",
   openGraph: {
     type: "website",
     locale: "en_US",

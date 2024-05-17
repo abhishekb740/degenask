@@ -13,6 +13,7 @@ import { formatEther, parseEther } from "viem";
 import generateUniqueId from "generate-unique-id";
 import { Question, User } from "@/types";
 import dynamic from "next/dynamic";
+import { setQuestion } from "@/app/_actions/queries";
 
 const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
@@ -114,22 +115,15 @@ export default function AskQuestion({ user }: { user: User }) {
   };
 
   const store = async () => {
-    const response = await fetch("/api/setQuestion", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        questionId,
-        content: questionContent,
-        creatorUsername,
-        creatorAddress,
-        authorAddress: address,
-        isAnswered: false,
-        price,
-      }),
-    });
-    if (response.status === 200) {
+    const response = await setQuestion(
+      questionId,
+      questionContent,
+      creatorUsername,
+      creatorAddress,
+      address as string,
+      price,
+    );
+    if (response.status === 201) {
       toast.success("Saved successfully", {
         style: {
           borderRadius: "10px",
@@ -216,7 +210,7 @@ export default function AskQuestion({ user }: { user: User }) {
           }}
         />
       ) : (
-        <Connect />
+        <Connect label={`Ask with ${price} DEGEN`} />
       )}
     </div>
   );

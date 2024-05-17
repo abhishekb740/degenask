@@ -22,13 +22,20 @@ export default async function GET(request: NextRequest) {
       (
         <div
           style={{
-            backgroundImage: `url("https://i.ibb.co/Wswv3w3/og-bg.png")`,
+            backgroundImage: `url("https://i.ibb.co/mHh7gKt/og-bg.png")`,
             backgroundSize: "570px 320px",
             position: "relative",
           }}
           tw="flex items-center justify-center p-8 w-full min-h-screen"
         >
-          <img src={pfp} tw="w-52 h-52 bg-white p-2 rounded-full" alt="pfp" />
+          <img
+            src={pfp}
+            tw="w-52 h-52 bg-white p-2 rounded-full"
+            alt="pfp"
+            style={{
+              objectFit: "cover",
+            }}
+          />
           <img
             src="https://i.ibb.co/86v435d/og-nit.png"
             tw="absolute w-60 h-36 bottom-3 right-28"

@@ -25,7 +25,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               appearance: {
                 theme: "dark",
                 accentColor: "#4C2897",
-                logo: "/favicon.png",
+                logo: "/degenask.png",
               },
               defaultChain: baseSepolia,
               loginMethods: ["farcaster"],

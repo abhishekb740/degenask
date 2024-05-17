@@ -1,6 +1,5 @@
-import { getUserData } from "@/app/_actions/queries";
+import { getUser, getUserData } from "@/app/_actions/queries";
 import { User } from "@/types";
-import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -43,12 +42,22 @@ const SetupProfile = dynamic(() => import("@/components/setup"), {
 
 export default async function Setup({ params }: Props) {
   try {
-    const { data: user } = await client
-      .from("farstackUser")
-      .select("*")
-      .eq("username", params.username);
-    if (user?.[0]) {
-      return <SetupProfile user={user?.[0] as User} />;
+    const user = await getUser(params.username);
+    const profile = await getUserData(params.username);
+    if (user?.[0] && profile) {
+      return (
+        <SetupProfile
+          user={user?.[0] as User}
+          profile={{
+            username: params.username,
+            name: profile.Socials.Social[0].profileDisplayName,
+            bio: profile.Socials.Social[0].profileBio,
+            image: profile.Socials.Social[0].profileImage,
+            followers: profile.Socials.Social[0].followerCount,
+            followings: profile.Socials.Social[0].followingCount,
+          }}
+        />
+      );
     } else {
       return (
         <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
