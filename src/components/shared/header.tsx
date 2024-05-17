@@ -78,7 +78,7 @@ export default function Header({ users }: { users: User[] }) {
         <img src="/degenask.png" className="w-6 h-6 object-cover" alt="logo" />
         <p className="text-[#A36EFD] md:text-xl lg:text-2xl font-title">degenask.me</p>
       </span>
-      {isLoggedIn ? (
+      {authenticated ? (
         <div
           className="relative flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl"
           onClick={toggleDropdown}
@@ -92,9 +92,20 @@ export default function Header({ users }: { users: User[] }) {
           <div
             className={`${
               isDropdownOpen ? "block absolute" : "hidden"
-            }  mt-28 z-10 divide-y divide-gray-100 rounded-lg shadow w-40 bg-neutral-50 font-primary`}
+            }  mt-36 z-10 divide-y divide-gray-100 rounded-lg shadow w-40 bg-neutral-50 font-primary`}
           >
             <ul className="py-1 text-sm text-neutral-700" aria-labelledby="dropdown-button">
+              <li>
+                <button
+                  type="button"
+                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-100 hover:text-neutral-800"
+                  onClick={() => {
+                    router.push(`/${user?.farcaster?.username}`);
+                  }}
+                >
+                  My profile
+                </button>
+              </li>
               <li>
                 <button
                   type="button"

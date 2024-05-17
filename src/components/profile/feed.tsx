@@ -210,6 +210,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
         address: profile.address,
         price: profile.price,
         count: profile.count + 1,
+        degen: profile.degen,
       });
     }
     setIsLoading(false);
@@ -314,7 +315,10 @@ export default function Feed({ key, question }: { key: string; question: Questio
             </p>
             <span className="absolute bottom-2 items-center justify-center">
               {isPageLoading ? (
-                <Button id="peek" title={`Unlock with ${question.price * 0.01} DEGEN`} />
+                <Button
+                  id="peek"
+                  title={`Unlock with ${(question.price * 0.01).toFixed(3)} DEGEN`}
+                />
               ) : address ? (
                 <Button
                   id="peek"
@@ -323,7 +327,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                       "Unlocking answer..."
                     ) : (
                       <span className="inline-flex gap-2 items-center">
-                        <FiLock /> Unlock with ${question.price * 0.01} DEGEN
+                        <FiLock /> Unlock with ${(question.price * 0.01).toFixed(3)} DEGEN
                       </span>
                     )
                   }
@@ -341,7 +345,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                   }}
                 />
               ) : (
-                <Connect label={`Unlock with ${question.price * 0.01} DEGEN`} />
+                <Connect label={`Unlock with ${(question.price * 0.01).toFixed(3)} DEGEN`} />
               )}
             </span>
           </div>

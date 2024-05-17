@@ -10,6 +10,7 @@ export const userAtom = atom<User>({
   count: 0,
   address: "",
   price: 0,
+  degen: 0,
 });
 
 export const headshotAtom = atom<UserData>({

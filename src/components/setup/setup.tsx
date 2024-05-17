@@ -87,6 +87,7 @@ export default function SetProfile({ user }: { user: User }) {
         address: String(address),
         price: fees ?? 0,
         count,
+        degen: user.degen,
       });
     }
     setIsLoading(false);
@@ -123,7 +124,7 @@ export default function SetProfile({ user }: { user: User }) {
           setFees(e.target.value);
         }}
         value={fees}
-        suffix={`DEGEN ${fees ? `(${(fees * 0.014).toFixed(2)} USD)` : ``}`}
+        suffix={`DEGEN ${fees ? `(${(fees * user.degen).toFixed(2)} USD)` : ``}`}
       />
       <div className="inline-flex gap-4 items-center">
         {isPageLoading ? (

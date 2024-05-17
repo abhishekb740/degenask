@@ -3,6 +3,7 @@ export interface User {
   count: number;
   address: string;
   price: number;
+  degen: number;
 }
 
 export interface Profile {

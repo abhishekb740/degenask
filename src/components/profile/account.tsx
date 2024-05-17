@@ -39,7 +39,7 @@ export default function Account({ user }: { user: User }) {
           <p className="text-neutral-500 text-md font-regular">Price to Ask</p>
           <span className="flex flex-row items-center justify-between">
             {price} DEGEN
-            <p className="text-neutral-400">{(price * 0.014).toFixed(2)} USD</p>
+            <p className="text-neutral-400">{(price * user.degen).toFixed(2)} USD</p>
           </span>
         </span>
       </div>
