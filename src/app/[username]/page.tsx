@@ -1,7 +1,7 @@
 import { Questions, User } from "@/types";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getQuestions, getUser, getUserData } from "../_actions/queries";
+import { getAllUsers, getQuestions, getUser, getUserData } from "../_actions/queries";
 
 type Props = {
   params: {
@@ -45,6 +45,7 @@ export default async function Creator({ params }: Props) {
     const user = await getUser(params.username);
     const questions = await getQuestions(params.username);
     const profile = await getUserData(params.username);
+    const users = await getAllUsers();
     if (user?.[0] && questions && profile) {
       return (
         <Profile
@@ -58,6 +59,7 @@ export default async function Creator({ params }: Props) {
             followings: profile.Socials.Social[0].followingCount,
           }}
           questions={questions as Questions}
+          users={users as User[]}
         />
       );
     } else {

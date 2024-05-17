@@ -2,6 +2,7 @@ import { Hero } from "@/components";
 import { User } from "@/types";
 import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
+import { getAllUsers } from "./_actions/queries";
 
 export const fetchCache = "force-no-store";
 
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   try {
-    const { data } = await client.from("farstackUser").select("*");
-    return <Hero users={data as User[]} />;
+    const response = await getAllUsers();
+    return <Hero users={response as User[]} />;
   } catch (e) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">

@@ -1,4 +1,4 @@
-import { getUser, getUserData } from "@/app/_actions/queries";
+import { getAllUsers, getUser, getUserData } from "@/app/_actions/queries";
 import { User } from "@/types";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -44,6 +44,7 @@ export default async function Setup({ params }: Props) {
   try {
     const user = await getUser(params.username);
     const profile = await getUserData(params.username);
+    const users = await getAllUsers();
     if (user?.[0] && profile) {
       return (
         <SetupProfile
@@ -56,6 +57,7 @@ export default async function Setup({ params }: Props) {
             followers: profile.Socials.Social[0].followerCount,
             followings: profile.Socials.Social[0].followingCount,
           }}
+          users={users as User[]}
         />
       );
     } else {

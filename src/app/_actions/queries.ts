@@ -48,6 +48,11 @@ export const getUserData = async (username: string) => {
   return data;
 };
 
+export const getAllUsers = async () => {
+  const { data } = await client.from("farstackUser").select("*");
+  return data;
+};
+
 export const getAnswers = async (questionId: string) => {
   const { data } = await client.from("farstackAnswers").select("*").eq("questionId", questionId);
   return data;

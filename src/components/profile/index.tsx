@@ -27,10 +27,12 @@ export default function Profile({
   user,
   profile,
   questions: posts,
+  users,
 }: {
   user: User;
   profile: UserData;
   questions: Questions;
+  users: User[];
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -68,7 +70,7 @@ export default function Profile({
   }, [user, posts, profile]);
 
   return (
-    <Layout>
+    <Layout users={users}>
       <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-40">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         {isLoading ? (

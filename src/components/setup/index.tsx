@@ -16,7 +16,15 @@ const Headshot = dynamic(() => import("@/components/shared/headsot"), {
   loading: () => <HeadshotSkeleton />,
 });
 
-export default function SetupProfile({ user, profile }: { user: User; profile: UserData }) {
+export default function SetupProfile({
+  user,
+  profile,
+  users,
+}: {
+  user: User;
+  profile: UserData;
+  users: User[];
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setHeadshot = useSetAtom(headshotAtom);
@@ -39,7 +47,7 @@ export default function SetupProfile({ user, profile }: { user: User; profile: U
   }, [profile]);
 
   return (
-    <Layout>
+    <Layout users={users}>
       <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         <SetProfile user={user} />
