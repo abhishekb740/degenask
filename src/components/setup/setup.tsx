@@ -12,6 +12,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 import { updateCreator } from "@/app/_actions/queries";
+import { FiAlertCircle } from "react-icons/fi";
+import { PiMoneyWavy } from "react-icons/pi";
 
 const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
@@ -113,7 +115,7 @@ export default function SetProfile({ user }: { user: User }) {
 
   return (
     <div className="flex flex-col w-full md:w-3/5 gap-5 items-start justify-start font-primary">
-      <h2 className="text-xl text-neutral-500">Set-up Profile</h2>
+      <h2 className="text-xl text-neutral-500">Setup Profile</h2>
       <Input
         id="price"
         name="price"
@@ -124,9 +126,20 @@ export default function SetProfile({ user }: { user: User }) {
           setFees(e.target.value);
         }}
         value={fees}
+        helper="Asker will pay you this amount to ask question"
         suffix={`DEGEN ${fees ? `(${(fees * user.degen).toFixed(2)} USD)` : ``}`}
       />
-      <div className="inline-flex gap-4 items-center">
+      {/* TODO: Show this as tooltip onHover of info icon, it can be place beside the Setup profile title */}
+      {/* <span className="flex flex-row gap-2 text-sm items-start justify-start p-2 bg-violet-400 bg-opacity-20 border border-violet-400 text-neutral-500 rounded-xl">
+        <PiMoneyWavy size={25} color="#8b5cf6" /> For a smooth and well-maintained experience, we apply a 20% service fee to cover maintenance costs.
+      </span> */}
+      {authMethod === "initial" && (
+        <span className="flex flex-row gap-2 text-sm items-start justify-start p-2 bg-yellow-400 bg-opacity-25 border border-amber-400 text-neutral-500 rounded-xl">
+          <FiAlertCircle size={20} color="#d97706" /> NOTE: You won&apos;t be able to change wallet
+          address again. Please use your account accordingly.
+        </span>
+      )}
+      <div className="flex flex-row gap-4 items-start">
         {isPageLoading ? (
           <Button id="setPrice" title={authMethod === "initial" ? "Create a Page" : "Save price"} />
         ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
@@ -172,13 +185,15 @@ export default function SetProfile({ user }: { user: User }) {
           <Connect label={`${authMethod === "initial" ? "Create a Page" : "Save price"}`} />
         )}
         {authMethod === "edit" && (
-          <Button
+          <button
             id="cancel"
-            title="Go back"
             onClick={() => {
               router.push(`/${user.username}`);
             }}
-          />
+            className="font-medium font-primary border border-[#A36EFD] hover:bg-[#9a61fc] hover:shadow-lg hover:text-white text-sm md:text-md lg:text-lg py-[0.575rem] px-10 rounded-3xl w-fit"
+          >
+            Go back
+          </button>
         )}
       </div>
     </div>

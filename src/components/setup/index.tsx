@@ -48,7 +48,7 @@ export default function SetupProfile({
 
   return (
     <Layout users={users}>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl">
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-40 md:mt-0">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         <SetProfile user={user} />
       </div>

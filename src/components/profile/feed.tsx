@@ -231,6 +231,17 @@ export default function Feed({ key, question }: { key: string; question: Questio
     if (response.status === 201) {
       const questionResponse = await updateStatus(question.questionId);
       if (questionResponse.status === 204) {
+        setQuestions((questions) => {
+          return questions.map((q) => {
+            if (q.questionId === question.questionId) {
+              return {
+                ...q,
+                isAnswered: true,
+              };
+            }
+            return q;
+          });
+        });
         updateUser();
       }
     }
@@ -327,7 +338,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
                       "Unlocking answer..."
                     ) : (
                       <span className="inline-flex gap-2 items-center">
-                        <FiLock /> Unlock with ${(question.price * 0.01).toFixed(3)} DEGEN
+                        <FiLock /> Unlock with {(question.price * 0.01).toFixed(3)} DEGEN
                       </span>
                     )
                   }
@@ -351,6 +362,13 @@ export default function Feed({ key, question }: { key: string; question: Questio
           </div>
         )
       )}
+      {calculateDeadline(question.createdAt) === "Expired" &&
+        !question.isAnswered &&
+        user?.farcaster?.username === question.creatorUsername && (
+          <div className="w-full flex justify-end items-end">
+            <span className="bg-[#A36EFD] text-white w-fit py-1.5 px-3 rounded-lg">Expired</span>
+          </div>
+        )}
       {calculateDeadline(question.createdAt) === "Expired" &&
         !question.isAnswered &&
         user?.farcaster?.username !== question.creatorUsername &&

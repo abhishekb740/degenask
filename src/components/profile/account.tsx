@@ -20,14 +20,14 @@ export default function Account({ user }: { user: User }) {
       <span className="flex flex-row w-full items-center justify-between">
         <h3 className="text-xl text-neutral-500">{name}&apos;s Degenask</h3>
         <button
-          className="flex flex-row gap-2 w-fit text-neutral-600 hover:text-neutral-800 items-center justify-center"
+          className="flex flex-row gap-2 w-fit text-violet-500 hover:text-violet-600 items-center justify-center"
           onClick={() => {
             setAuth("setup");
             setAuthMethod("edit");
             router.push(`/setup/${creatorUsername}`);
           }}
         >
-          <FaRegEdit /> Edit
+          <FaRegEdit /> Edit price
         </button>
       </span>
       <div className="flex flex-col gap-2">
