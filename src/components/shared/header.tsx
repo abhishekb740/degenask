@@ -91,41 +91,41 @@ export default function Header({ users }: { users: User[] }) {
         </div>
       )}
       <div className="w-full flex flex-col md:flex-row justify-between gap-y-10 mt-14 px-5 md:px-20 items-center">
-          <span className="flex flex-row gap-2 items-center justify-center">
+        <span className="flex flex-row gap-2 items-center justify-center">
           <img src="/degenask.png" className="w-6 h-6 object-cover" alt="logo" />
           <p className="text-[#A36EFD] md:text-xl lg:text-2xl font-title">degenask.me</p>
         </span>
         <div className="relative flex flex-col items-center">
-        <div className="flex flex-row max-w-64 rounded-3xl py-1 border border-neutral-300 px-5 items-center justify-center">
-          <IoIosSearch size={25} className="text-neutral-400" />
-          <input
-            className="flex ml-4 w-full py-1.5 bg-transparent focus:outline-none"
-            placeholder="Search creator"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        {searchQuery && (
-          <div className="absolute top-full flex flex-col z-10 mt-2 max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-full rounded-xl shadow-lg scroll-smooth scrollbar">
-            {filteredUsers.length ? (
-              filteredUsers.map((user) => {
-                return (
-                  <button
-                    key={user.username}
-                    className="flex flex-row gap-3 hover:bg-neutral-100 items-center w-full px-5 py-2 cursor-pointer"
-                    onClick={() => router.push(`/${user.username}`)}
-                  >
-                    <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
-                    <p className="text-lg font-primary">{user.username}</p>
-                  </button>
-                );
-              })
-            ) : (
-              <p className="ml-4 text-lg py-2 text-neutral-800 font-primary">No creator found</p>
-            )}
+          <div className="flex flex-row max-w-64 rounded-3xl py-1 border border-neutral-300 px-5 items-center justify-center">
+            <IoIosSearch size={25} className="text-neutral-400" />
+            <input
+              className="flex ml-4 w-full py-1.5 bg-transparent focus:outline-none"
+              placeholder="Search creator"
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        )}
-      </div>
-      {authenticated ? (
+          {searchQuery && (
+            <div className="absolute top-full flex flex-col z-10 mt-2 max-h-[13rem] border border-neutral-200 bg-white/90 backdrop-blur-lg w-full rounded-xl shadow-lg scroll-smooth scrollbar">
+              {filteredUsers.length ? (
+                filteredUsers.map((user) => {
+                  return (
+                    <button
+                      key={user.username}
+                      className="flex flex-row gap-3 hover:bg-neutral-100 items-center w-full px-5 py-2 cursor-pointer"
+                      onClick={() => router.push(`/${user.username}`)}
+                    >
+                      <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
+                      <p className="text-lg font-primary">{user.username}</p>
+                    </button>
+                  );
+                })
+              ) : (
+                <p className="ml-4 text-lg py-2 text-neutral-800 font-primary">No creator found</p>
+              )}
+            </div>
+          )}
+        </div>
+        {authenticated ? (
           <div
             className="flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl"
             onClick={toggleDropdown}

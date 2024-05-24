@@ -91,7 +91,7 @@ export default function Profile({
           return <Feed key={question.questionId} question={question} />;
         })
       ) : (
-        <p className="w-full text-start text-neutral-500">
+        <p className="w-full text-start mb-5 text-neutral-500">
           No question asked yet. You can be the first 👀
         </p>
       )}
