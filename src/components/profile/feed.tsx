@@ -314,6 +314,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
       {answer &&
       (address === question.authorAddress ||
         address === question.creatorAddress ||
+        question.creatorUsername === user?.farcaster?.username ||
         (question.whitelistedAddresses &&
           question.whitelistedAddresses.includes(String(address)))) ? (
         <p className="text-neutral-800">{answer.content}</p>
