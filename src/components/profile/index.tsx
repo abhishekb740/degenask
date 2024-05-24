@@ -71,7 +71,7 @@ export default function Profile({
 
   return (
     <Layout users={users}>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-40">
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-20">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         {isLoading ? (
           <AskSkeleton />
@@ -91,7 +91,7 @@ export default function Profile({
           return <Feed key={question.questionId} question={question} />;
         })
       ) : (
-        <p className="w-full text-start text-neutral-500">
+        <p className="w-full text-start mb-5 text-neutral-500">
           No question asked yet. You can be the first 👀
         </p>
       )}
