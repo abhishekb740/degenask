@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const username = params.username;
   const profile = await getUserData(username);
   return {
-    title: `${profile.Socials.Social[0].profileDisplayName} | DegenAsk`,
-    icons: profile.Socials.Social[0].profileImage,
+    title: `${profile?.Socials?.Social[0]?.profileDisplayName} | DegenAsk`,
+    icons: profile?.Socials?.Social[0]?.profileImage,
     description:
       "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
     openGraph: {
