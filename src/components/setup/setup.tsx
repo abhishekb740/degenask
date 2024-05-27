@@ -119,11 +119,11 @@ export default function SetProfile({ user }: { user: User }) {
       <div className="flex flex-row gap-4 items-center justify-between w-full">
         <h2 className="text-xl text-neutral-500">Setup Profile</h2>
         <div className="relative group">
-          <IoInformationCircle size={25} />
-          <div className="absolute bottom-full left-0 md:left-1/2 transform -translate-x-1/2 mb-2 w-64 p-2 bg-violet-400 bg-opacity-60 border border-violet-400 text-neutral-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <div className="flex flex-row gap-2 text-sm items-start justify-start">
-              <PiMoneyWavy size={25} color="#8b5cf6" /> For a smooth and well-maintained experience,
-              we apply a 20% service fee to cover maintenance costs.
+          <IoInformationCircle size={25} className="text-neutral-600" />
+          <div className="absolute bottom-full -left-20 md:left-1/2 transform -translate-x-1/2 mb-2 min-w-64 p-3 bg-white md:bg-violet-400 bg-opacity-90 md:bg-opacity-30 border border-violet-300 md:border-violet-400 text-neutral-800 md:text-neutral-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="flex flex-col gap-1.5 text-sm items-center justify-center">
+              <PiMoneyWavy size={20} /> For a smooth and well-maintained experience, we apply a 10%
+              service fee to cover maintenance costs.
             </div>
           </div>
         </div>
