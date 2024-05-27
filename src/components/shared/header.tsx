@@ -127,7 +127,7 @@ export default function Header({ users }: { users: User[] }) {
         </div>
         {authenticated ? (
           <div
-            className="flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl"
+            className="flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl border-neutral-300 border"
             onClick={toggleDropdown}
           >
             <img
