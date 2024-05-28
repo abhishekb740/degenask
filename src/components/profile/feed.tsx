@@ -299,7 +299,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
   return (
     <div
       key={key}
-      className="flex flex-col bg-white p-4 sm:p-6 w-full mb-3.5 font-primary rounded-3xl shadow-xl"
+      className="flex flex-col bg-white p-4 sm:p-6 w-full mb-3.5 font-primary rounded-3xl shadow-xl "
     >
       <span className="flex flex-row gap-4 items-center">
         <span className="w-8 h-8 bg-gradient-to-b from-violet-500 to-blue-600 rounded-full"></span>
@@ -320,7 +320,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
         <p className="text-neutral-800">{answer.content}</p>
       ) : (
         answer && (
-          <div className="relative bg-transparent">
+          <div className="relative bg-transparent 3xl:mt-8">
             <p className="mb-2 blur select-none text-neutral-800">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro facilis praesentium
               minima natus fugiat nobis quidem suscipit, vel recusandae deserunt cupiditate!
