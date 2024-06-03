@@ -97,7 +97,7 @@ export default function Hero({ users }: { users: User[] }) {
         <p className="text-white text-2xl font-title">degenask.me</p>
       </span>
       <h1 className="text-[2rem] md:text-[3rem] text-center font-primary font-semibold text-neutral-200">
-        Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
+        Get paid <span className="text-[#A36EFD]">$Degen</span> to answer questions
       </h1>
       {!authenticated ? (
         <button
