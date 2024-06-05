@@ -22,6 +22,8 @@ import {
   updateStatus,
   updateWhitelist,
 } from "@/app/_actions/queries";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 
 export default function Feed({ key, question }: { key: string; question: Question }) {
   const [answerContent, setAnswerContent] = useState<string>("");
@@ -305,7 +307,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
         <span className="w-8 h-8 bg-gradient-to-b from-violet-500 to-blue-600 rounded-full"></span>
         {formatAddress(question.authorAddress)}
       </span>
-      <p className="my-2">{question.content}</p>
+      <p className="my-2">{parse(DOMPurify.sanitize(question.content))}</p>
       {!question.isAnswered && user?.farcaster?.username !== question.creatorUsername && (
         <div className="w-full flex justify-end items-end">
           <span className="bg-[#A36EFD] text-white w-fit p-2 rounded-lg">Not answered</span>

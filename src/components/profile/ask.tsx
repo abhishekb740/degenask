@@ -14,10 +14,14 @@ import generateUniqueId from "generate-unique-id";
 import { Question, User } from "@/types";
 import dynamic from "next/dynamic";
 import { setQuestion } from "@/app/_actions/queries";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const Connect = dynamic(() => import("@/components/shared/connect"), {
   ssr: false,
 });
+
+const customToolbar = [["bold", "italic", "underline", "code-block"]];
 
 export default function AskQuestion({ user }: { user: User }) {
   const { price, username: creatorUsername, address: creatorAddress } = user;
@@ -28,6 +32,7 @@ export default function AskQuestion({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [questionContent, setQuestionContent] = useState<string>("");
+  console.log("questionContent", questionContent);
   const questionsData = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
   const { address, chainId } = useAccount();
@@ -180,15 +185,17 @@ export default function AskQuestion({ user }: { user: User }) {
   }, []);
 
   return (
-    <div className="flex flex-col w-full md:w-3/5 gap-5 font-primary">
-      <h3 className="text-xl text-neutral-500">Ask {name} a question</h3>
-      <TextArea
-        id="content"
-        name="content"
-        placeholder="Type a question here..."
-        value={questionContent}
-        onChange={(e) => setQuestionContent(e.target.value)}
-      />
+    <div className="flex flex-col w-full md:w-3/5 gap-16 font-primary">
+      <div className="flex flex-col w-full gap-2">
+        <h3 className="text-xl text-neutral-500">Ask {name} a question</h3>
+        <ReactQuill
+          value={questionContent}
+          onChange={setQuestionContent}
+          modules={{ toolbar: customToolbar }}
+          placeholder="Type a question here..."
+          className="h-48"
+        />
+      </div>
       {isPageLoading ? (
         <Button id="askQuestion" title="Ask question" />
       ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
