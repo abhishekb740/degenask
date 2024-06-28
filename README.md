@@ -1,14 +1,17 @@
 # DegenAsk
 
-<img alt="DegenAsk" src="public/degenask.png"  width="100" height="100"/>
+<img alt="DegenAsk" src="public/degenask.png"  width="50" height="50"/>
 
-Social Q&A app on Base where answers can make money for you. Pay to ask & earn when others peek into the answers.
+[degenask.me](https://degenask.me) is a social Q&A app on Base. Earn $DEGEN for answering questions and get rewards if someone peek into your answer. Leverage your onchain social reputation and stay based.
 
-## 🧩 Prerequisites & Manual Setup
+## 🎒 Prerequisites & Manual Setup
 
-You must have a Farcaster (FC) account. Check out how to create a FC from [here](https://warpcast.com).
+You must have a Farcaster account to interact with degenask. Create your account from [here](https://warpcast.com).
 
-Follow the instructions for the local environment: The user must have Node.js and pnpm to run this platform. You can download Node.js from [here](https://nodejs.org/en/download/).
+You require two things in your machine:
+
+- [Node.js](https://nodejs.org/en/download/)
+- [Pnpm](https://pnpm.io/installation)
 
 ## 🛠️ Local Setup Instructions
 
@@ -38,9 +41,3 @@ pnpm dev
 ```
 
 - Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-## 🚀 Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
-
-Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
