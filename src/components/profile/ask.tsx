@@ -32,7 +32,6 @@ export default function AskQuestion({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   const [questionContent, setQuestionContent] = useState<string>("");
-  console.log("questionContent", questionContent);
   const questionsData = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
   const { address, chainId } = useAccount();
@@ -193,7 +192,7 @@ export default function AskQuestion({ user }: { user: User }) {
           onChange={setQuestionContent}
           modules={{ toolbar: customToolbar }}
           placeholder="Type a question here..."
-          className="h-48"
+          className="h-32"
         />
       </div>
       {isPageLoading ? (
