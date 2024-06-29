@@ -1,6 +1,6 @@
-# DegenAsk
+# Degenask
 
-<img alt="DegenAsk" src="public/degenask.png"  width="50" height="50"/>
+<img alt="Degenask" src="public/degenask.png"  width="50" height="50"/>
 
 [degenask.me](https://degenask.me) is a social Q&A app on Base. Earn $DEGEN for answering questions and get rewards if someone peek into your answer. Leverage your onchain social reputation and stay based.
 

@@ -8,7 +8,7 @@ import { headshotAtom, questionsAtom } from "@/store";
 import { publicClient } from "@/utils/config";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import toast from "react-hot-toast";
-import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
+import { DegenaskABI, DegenaskContract, TokenABI, TokenContract } from "@/utils/constants";
 import { formatEther, parseEther } from "viem";
 import generateUniqueId from "generate-unique-id";
 import { Question, User } from "@/types";
@@ -84,7 +84,7 @@ export default function AskQuestion({ user }: { user: User }) {
       address: TokenContract,
       abi: TokenABI,
       functionName: "approve",
-      args: [DegenAskContract, parseEther(String(price))],
+      args: [DegenaskContract, parseEther(String(price))],
     }).catch((error) => {
       setIsLoading(false);
       toast.error("User rejected the request", {
@@ -104,8 +104,8 @@ export default function AskQuestion({ user }: { user: User }) {
     setQuestionId(questionId);
     writeContractAsync({
       account: address,
-      address: DegenAskContract,
-      abi: DegenAskABI,
+      address: DegenaskContract,
+      abi: DegenaskABI,
       functionName: "askQuestion",
       args: [Number(questionId), creatorAddress, parseEther(String(price))],
     }).catch((error) => {

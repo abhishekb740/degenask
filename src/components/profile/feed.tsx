@@ -5,7 +5,7 @@ import TextArea from "../form/textarea";
 import { usePrivy } from "@privy-io/react-auth";
 import Button from "../form/button";
 import toast from "react-hot-toast";
-import { DegenAskABI, DegenAskContract, TokenABI, TokenContract } from "@/utils/constants";
+import { DegenaskABI, DegenaskContract, TokenABI, TokenContract } from "@/utils/constants";
 import { publicClient } from "@/utils/config";
 import generateUniqueId from "generate-unique-id";
 import { questionsAtom, userAtom } from "@/store";
@@ -98,7 +98,7 @@ export default function Feed({ key, question }: { key: string; question: Questio
       address: TokenContract,
       abi: TokenABI,
       functionName: "approve",
-      args: [DegenAskContract, parseEther(String(price))],
+      args: [DegenaskContract, parseEther(String(price))],
     }).catch((error) => {
       setIsLoading(false);
       toast.error("User rejected the request", {
@@ -112,8 +112,8 @@ export default function Feed({ key, question }: { key: string; question: Questio
   const unlockAnswer = async () => {
     writeUnlockContractAsync({
       account: address,
-      address: DegenAskContract,
-      abi: DegenAskABI,
+      address: DegenaskContract,
+      abi: DegenaskABI,
       functionName: "peekIntoAnswer",
       args: [Number(question.questionId)],
     }).catch((error) => {
@@ -184,8 +184,8 @@ export default function Feed({ key, question }: { key: string; question: Questio
     setIsLoading(true);
     writeContractAsync({
       account: address,
-      address: DegenAskContract,
-      abi: DegenAskABI,
+      address: DegenaskContract,
+      abi: DegenaskABI,
       functionName: "refundPayment",
       args: [question.questionId],
     }).catch((error) => {

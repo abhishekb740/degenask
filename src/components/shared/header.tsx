@@ -3,7 +3,7 @@ import { setCreator } from "@/app/_actions/queries";
 import FarcasterIcon from "@/icons/farcaster";
 import { authAtom, authMethodAtom } from "@/store";
 import { User } from "@/types";
-import { useLogin, useLogout, usePrivy, useWallets } from "@privy-io/react-auth";
+import { useLogin, useLogout, usePrivy } from "@privy-io/react-auth";
 import { useAtomValue, useSetAtom } from "jotai";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,11 +15,10 @@ import { IoIosSearch } from "react-icons/io";
 export default function Header({ users }: { users: User[] }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const router = useRouter();
-  const { ready, authenticated, user, createWallet } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
   const setAuth = useSetAtom(authAtom);
   const authMethod = useAtomValue(authMethodAtom);
   const setAuthMethod = useSetAtom(authMethodAtom);
-  const { wallets } = useWallets();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const toggleDropdown = () => {
@@ -51,11 +50,6 @@ export default function Header({ users }: { users: User[] }) {
 
   const { login } = useLogin({
     async onComplete(user) {
-      if (authenticated) {
-        if (wallets.length === 0) {
-          const res = createWallet();
-        }
-      }
       if (user) {
         const isExist = users.find(
           (profile: User) => profile.username === user?.farcaster?.username,
@@ -93,13 +87,13 @@ export default function Header({ users }: { users: User[] }) {
       <div className="w-full flex flex-col md:flex-row justify-between gap-y-10 mt-14 px-5 md:px-20 items-center">
         <span className="flex flex-row gap-2 items-center justify-center">
           <img src="/degenask.png" className="w-6 h-6 object-cover" alt="logo" />
-          <p className="text-[#A36EFD] md:text-xl lg:text-2xl font-title">degenask.me</p>
+          <p className="text-[#9c62ff] md:text-xl lg:text-2xl font-title">degenask.me</p>
         </span>
         <div className="relative flex flex-col items-center">
-          <div className="flex flex-row max-w-64 rounded-3xl py-1 border border-neutral-300 px-5 items-center justify-center">
-            <IoIosSearch size={25} className="text-neutral-400" />
+          <div className="flex flex-row max-w-64 rounded-3xl py-1 border border-neutral-400/50 px-5 items-center justify-center">
+            <IoIosSearch size={22} className="text-neutral-500" />
             <input
-              className="flex ml-4 w-full py-1.5 bg-transparent focus:outline-none"
+              className="flex ml-2.5 w-full py-1.5 bg-transparent focus:outline-none"
               placeholder="Search creator"
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -127,7 +121,7 @@ export default function Header({ users }: { users: User[] }) {
         </div>
         {authenticated ? (
           <div
-            className="flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl border-neutral-300 border"
+            className="flex flex-row px-6 py-3 w-fit justify-center items-center font-bold gap-3 text-neutral-700 bg-white hover:cursor-pointer rounded-xl border border-neutral-200"
             onClick={toggleDropdown}
           >
             <img
@@ -171,7 +165,7 @@ export default function Header({ users }: { users: User[] }) {
             onClick={login}
             disabled={!ready && authenticated}
           >
-            <FarcasterIcon className="w-5 h-5" color="#A36EFD" />
+            <FarcasterIcon className="w-5 h-5" color="#9c62ff" />
             Sign in
           </button>
         )}

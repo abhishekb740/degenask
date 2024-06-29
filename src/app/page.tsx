@@ -1,41 +1,27 @@
 import { Hero } from "@/components";
-import { User } from "@/types";
-import { client } from "@/utils/supabase/client";
 import { Metadata } from "next";
-import { getAllUsers } from "./_actions/queries";
 
 export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
-  title: "DegenAsk",
+  title: "Degenask",
   description:
-    "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
+    "Earn $DEGEN for answering questions and ask anything to your favourite creators that you're curious about",
   icons: "/degenask.png",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_HOST_URL,
-    title: "DegenAsk",
+    title: "Degenask",
     description:
-      "Ask anything you're curious about, learn from the creator's thoughts, and earn $DEGEN for your questions.",
+      "Earn $DEGEN for answering questions and ask anything to your favourite creators that you're curious about",
     images: {
-      url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata.png`,
-      alt: "DegenAsk",
+      url: `${process.env.NEXT_PUBLIC_HOST_URL}/metadata/degenaskv2.gif`,
+      alt: "Degenask",
     },
   },
 };
 
-export default async function Home() {
-  try {
-    const response = await getAllUsers();
-    return <Hero users={response as User[]} />;
-  } catch (e) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
-        <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
-          404: Page not found
-        </h1>
-      </main>
-    );
-  }
+export default function Home() {
+  return <Hero />;
 }

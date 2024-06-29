@@ -30,7 +30,7 @@ export default function Headshot() {
         </div>
       </div>
       <Link href={`https://warpcast.com/${headshotData.username}`} className="mt-6" target="_blank">
-        <Image src="/warpcast.svg" alt="setup" width={25} height={25} />
+        <Image src="/icons/warpcast.svg" alt="setup" width={25} height={25} />
       </Link>
     </div>
   );

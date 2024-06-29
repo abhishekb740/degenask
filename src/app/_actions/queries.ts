@@ -1,7 +1,7 @@
 "use server";
 
 import { account, publicClient, walletClient } from "@/utils/config";
-import { DegenAskABI, DegenAskContract } from "@/utils/constants";
+import { DegenaskABI, DegenaskContract } from "@/utils/constants";
 import { formatAddress } from "@/utils/helper";
 import { client } from "@/utils/supabase/client";
 
@@ -49,25 +49,22 @@ export const getUserData = async (username: string) => {
 };
 
 export const getAllUsers = async () => {
-  const { data } = await client.from("farstackUser").select("*");
+  const { data } = await client.from("creators").select("*");
   return data;
 };
 
 export const getAnswers = async (questionId: string) => {
-  const { data } = await client.from("farstackAnswers").select("*").eq("questionId", questionId);
+  const { data } = await client.from("answers").select("*").eq("questionId", questionId);
   return data;
 };
 
 export const getUser = async (username: string) => {
-  const { data } = await client.from("farstackUser").select("*").eq("username", username);
+  const { data } = await client.from("creators").select("*").eq("username", username);
   return data;
 };
 
 export const getQuestions = async (username: string) => {
-  const { data } = await client
-    .from("farstackQuestions")
-    .select("*")
-    .eq("creatorUsername", username);
+  const { data } = await client.from("questions").select("*").eq("creatorUsername", username);
   return data;
 };
 
@@ -77,7 +74,7 @@ export const setAnswer = async (
   creatorUsername: string,
   answerId: string,
 ) => {
-  const response = await client.from("farstackAnswers").insert({
+  const response = await client.from("answers").insert({
     questionId,
     content,
     creatorUsername,
@@ -87,7 +84,7 @@ export const setAnswer = async (
 };
 
 export const setCreator = async (username: string) => {
-  const response = await client.from("farstackUser").insert({
+  const response = await client.from("creators").insert({
     username,
   });
   return response;
@@ -95,7 +92,7 @@ export const setCreator = async (username: string) => {
 
 export const updateCreator = async (username: string, address: string, price: number) => {
   const response = await client
-    .from("farstackUser")
+    .from("creators")
     .update({
       address,
       price,
@@ -106,7 +103,7 @@ export const updateCreator = async (username: string, address: string, price: nu
 
 export const updateCount = async (username: string, count: number) => {
   const response = await client
-    .from("farstackUser")
+    .from("creators")
     .update({
       count,
     })
@@ -123,7 +120,7 @@ export const setQuestion = async (
   price: number,
 ) => {
   const url = "https://api.neynar.com/v2/farcaster/cast";
-  const response = await client.from("farstackQuestions").insert({
+  const response = await client.from("questions").insert({
     questionId,
     content,
     creatorUsername,
@@ -158,7 +155,7 @@ export const setQuestion = async (
 
 export const updateWhitelist = async (questionId: string, whitelistedAddresses: string[]) => {
   const response = await client
-    .from("farstackQuestions")
+    .from("questions")
     .update({
       whitelistedAddresses,
     })
@@ -168,7 +165,7 @@ export const updateWhitelist = async (questionId: string, whitelistedAddresses: 
 
 export const updateStatus = async (questionId: string) => {
   const response = await client
-    .from("farstackQuestions")
+    .from("questions")
     .update({
       isAnswered: true,
     })
@@ -180,8 +177,8 @@ export const signAnswer = async (questionId: string) => {
   try {
     const { request }: any = await publicClient.simulateContract({
       account,
-      address: DegenAskContract,
-      abi: DegenAskABI,
+      address: DegenaskContract,
+      abi: DegenaskABI,
       functionName: "answerQuestion",
       args: [questionId],
     });

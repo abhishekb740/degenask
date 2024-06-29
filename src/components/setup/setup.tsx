@@ -3,7 +3,7 @@ import Input from "../form/input";
 import Button from "../form/button";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import dynamic from "next/dynamic";
-import { DegenAskABI, DegenAskContract } from "@/utils/constants";
+import { DegenaskABI, DegenaskContract } from "@/utils/constants";
 import { parseEther } from "viem";
 import toast from "react-hot-toast";
 import type { User } from "@/types";
@@ -47,8 +47,8 @@ export default function SetProfile({ user }: { user: User }) {
     if (price > 0) {
       writeContractAsync({
         account: address,
-        address: DegenAskContract,
-        abi: DegenAskABI,
+        address: DegenaskContract,
+        abi: DegenaskABI,
         functionName: "editCreatorFee",
         args: [parseEther(String(fees))],
       }).catch((error) => {
@@ -62,8 +62,8 @@ export default function SetProfile({ user }: { user: User }) {
     } else {
       writeContractAsync({
         account: address,
-        address: DegenAskContract,
-        abi: DegenAskABI,
+        address: DegenaskContract,
+        abi: DegenaskABI,
         functionName: "createCreator",
         args: [parseEther(String(fees))],
       }).catch((error) => {
