@@ -3,7 +3,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Layout from "../layout";
+import Container from "../container";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -48,11 +48,11 @@ export default function SetupProfile({
   }, [profile]);
 
   return (
-    <Layout users={users}>
+    <Container users={users}>
       <div className="relative flex flex-col gap-3 md:flex-row bg-white mb-8 md:mb-0 p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl border border-neutral-100 shadow-xl mt-20">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         <SetProfile user={user} userv1={userv1} />
       </div>
-    </Layout>
+    </Container>
   );
 }

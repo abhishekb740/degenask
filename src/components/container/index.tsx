@@ -1,7 +1,13 @@
 import { User } from "@/types";
 import Header from "../shared/header";
 
-export default function Layout({ users, children }: { users: User[]; children: React.ReactNode }) {
+export default function Container({
+  users,
+  children,
+}: {
+  users: User[];
+  children: React.ReactNode;
+}) {
   return (
     <>
       <Header users={users} />

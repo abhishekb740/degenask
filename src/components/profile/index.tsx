@@ -9,7 +9,7 @@ import { authAtom, authMethodAtom, headshotAtom, questionsAtom, userAtom } from 
 import dynamic from "next/dynamic";
 import AskSkeleton from "./skeleton/ask";
 import { useRouter } from "next/navigation";
-import Layout from "../layout";
+import Container from "../container";
 import HeadshotSkeleton from "../shared/skeletons/headshot";
 import Account from "./account";
 import Feed from "./feed";
@@ -71,8 +71,8 @@ export default function Profile({
   }, [user, posts, profile]);
 
   return (
-    <Layout users={users}>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-20">
+    <Container users={users}>
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl border border-neutral-100 shadow-xl mt-20">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         {isLoading ? (
           <AskSkeleton />
@@ -96,6 +96,6 @@ export default function Profile({
           No question asked yet. You can be the first 👀
         </p>
       )}
-    </Layout>
+    </Container>
   );
 }

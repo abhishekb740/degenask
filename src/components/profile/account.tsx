@@ -3,7 +3,6 @@
 import Button from "@/components/form/button";
 import { useAtomValue, useSetAtom } from "jotai";
 import { authAtom, authMethodAtom, degenPrice, headshotAtom, userAtom } from "@/store";
-import { User } from "@/types";
 import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 

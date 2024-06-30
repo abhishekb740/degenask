@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { setCreator } from "@/app/_actions/queries";
+import { fetchProfile, setCreator } from "@/app/_actions/queries";
 import FarcasterIcon from "@/icons/farcaster";
 import { authAtom, authMethodAtom } from "@/store";
-import { User } from "@/types";
+import { FCUser, User } from "@/types";
 import { useLogin, useLogout, usePrivy } from "@privy-io/react-auth";
 import { useAtomValue, useSetAtom } from "jotai";
 import Link from "next/link";
@@ -11,9 +11,11 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { MdNotificationsActive } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
+import { useDebounceValue } from "usehooks-ts";
 
 export default function Header({ users }: { users: User[] }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [fcUsers, setFcUsers] = useState<FCUser[]>([]);
   const router = useRouter();
   const { ready, authenticated, user } = usePrivy();
   const setAuth = useSetAtom(authAtom);
@@ -21,8 +23,9 @@ export default function Header({ users }: { users: User[] }) {
   const setAuthMethod = useSetAtom(authMethodAtom);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebounceValue("", 500);
   const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
+  const globalUsers = [...filteredUsers, ...fcUsers];
 
   const { logout } = useLogout({
     onSuccess: () => {
@@ -68,6 +71,28 @@ export default function Header({ users }: { users: User[] }) {
   });
 
   useEffect(() => {
+    const fetchProfiles = async () => {
+      const response = await fetchProfile(debouncedSearchQuery);
+      if (response && response.length > 0) {
+        response.map((user: any) => {
+          if (user.pfp_url) {
+            user.pfp = user.pfp_url;
+            delete user.pfp_url;
+          }
+        });
+        // i also want that if username from users match with response username then that entry should be remove from response
+        const filteredResponse = response.filter(
+          (user: any) => !users.some((profile: User) => profile.username === user.username),
+        );
+        setFcUsers(filteredResponse);
+      }
+    };
+    if (debouncedSearchQuery) {
+      fetchProfiles();
+    }
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -105,21 +130,28 @@ export default function Header({ users }: { users: User[] }) {
             <input
               className="flex ml-2.5 w-full py-1.5 bg-transparent focus:outline-none"
               placeholder="Search creator"
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setDebouncedSearchQuery(e.target.value);
+              }}
             />
           </div>
           {searchQuery && (
             <div className="absolute top-full flex flex-col z-10 mt-2 max-h-[13rem] border border-neutral-100 bg-white/90 backdrop-blur-lg w-full rounded-xl shadow-lg scroll-smooth scrollbar">
-              {filteredUsers.length ? (
-                filteredUsers.map((user) => {
+              {globalUsers.length ? (
+                globalUsers.map((user, key) => {
                   return (
                     <button
-                      key={user.username}
+                      key={key}
                       className="flex flex-row gap-3 hover:bg-neutral-100 items-center w-full px-5 py-2 cursor-pointer"
-                      onClick={() => router.push(`/${user.username}`)}
+                      onClick={() => router.push(`/${user?.username}`)}
                     >
-                      <span className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full"></span>
-                      <p className="text-lg font-primary">{user.username}</p>
+                      <img
+                        alt={user?.username}
+                        className="w-6 h-6 bg-gradient-to-br from-emerald-100 to-teal-300 rounded-full object-cover shadow"
+                        src={user?.pfp ? user.pfp : "/icons/warpcast.svg"}
+                      />
+                      <p className="text-lg font-primary">{user?.username}</p>
                     </button>
                   );
                 })

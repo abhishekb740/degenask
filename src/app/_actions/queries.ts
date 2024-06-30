@@ -217,11 +217,33 @@ export const signAnswer = async (questionId: string) => {
   }
 };
 
-export async function fetchPrice() {
+export const fetchPrice = async () => {
   const response = await fetch(
     "https://api.coingecko.com/api/v3/simple/price?ids=degen-base&vs_currencies=usd",
   );
   const data = await response.json();
-  const price = data["degen-base"].usd;
+  let price = 0;
+  if (data.status.error_code === 429) {
+    price = 0.01;
+  } else {
+    price = data["degen-base"]?.usd;
+  }
   return price;
-}
+};
+
+export const fetchProfile = async (query: string) => {
+  const options = {
+    method: "GET",
+    headers: { accept: "application/json", api_key: `${process.env.NEYNAR_API_KEY}` },
+  };
+  try {
+    const response = await fetch(
+      `https://api.neynar.com/v2/farcaster/user/search?q=${query}`,
+      options,
+    );
+    const data = await response.json();
+    return data.result.users;
+  } catch (error) {
+    return null;
+  }
+};
