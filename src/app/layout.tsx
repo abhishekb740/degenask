@@ -4,6 +4,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import Providers from "./providers";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
+import { fetchPrice } from "./_actions/queries";
 
 export const metadata: Metadata = {
   title: "Degenask",
@@ -24,15 +25,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const price = await fetchPrice();
   return (
     <html lang="en">
       <body className="bg-[#ffffff]">
-        <Providers>{children}</Providers>
+        <Providers degenPriceUsd={price}>{children}</Providers>
         <Analytics />
         <Toaster />
       </body>

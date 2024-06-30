@@ -1,14 +1,14 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 import { useLogin, useLogout, usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import FarcasterIcon from "@/icons/farcaster";
 import toast from "react-hot-toast";
 import { User } from "@/types";
 import { useSetAtom } from "jotai";
 import { authAtom, authMethodAtom } from "@/store";
-import { getAllUsers, setCreator } from "@/app/_actions/queries";
+import { getUser, setCreator } from "@/app/_actions/queries";
 import { FaArrowRightLong } from "react-icons/fa6";
 import Link from "next/link";
 import { featuredProfiles } from "@/utils/constants";
@@ -19,13 +19,10 @@ export default function Hero() {
   const { ready, authenticated, user } = usePrivy();
   const setAuth = useSetAtom(authAtom);
   const setAuthMethod = useSetAtom(authMethodAtom);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const setProfile = async () => {
-    const response = await setCreator(user?.farcaster?.username!);
+    const response = await setCreator(user?.farcaster?.username!, user?.farcaster?.pfp!);
     if (response.status === 201) {
       toast.success("User created successfully", {
         style: {
@@ -41,12 +38,9 @@ export default function Hero() {
 
   const { login } = useLogin({
     async onComplete(user) {
-      const users = (await getAllUsers()) as User[];
+      const isUserExist = await getUser(user?.farcaster?.username!);
       if (user) {
-        const isExist = users.find(
-          (profile: User) => profile.username === user?.farcaster?.username,
-        );
-        if (isExist) {
+        if (isUserExist?.[0]) {
           router.push(`/${user?.farcaster?.username}`);
           return;
         }
@@ -69,6 +63,19 @@ export default function Hero() {
     },
   });
 
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <main className="flex h-[100vh] overflow-hidden flex-col items-center justify-center gap-5 px-7 md:px-20">
       <span className="flex flex-row gap-2 items-center justify-center mb-20">
@@ -89,14 +96,17 @@ export default function Hero() {
           Start earning
         </button>
       ) : (
-        <button
-          className="relative flex flex-row items-center gap-x-3 w-fit px-5 py-3 font-primary text-neutral-50 bg-[#9c62ff] rounded-lg z-30"
-          onClick={toggleDropdown}
+        <div
+          className="relative flex flex-row items-center gap-x-3 w-fit px-8 py-3 font-medium font-primary text-neutral-50 bg-[#9c62ff] rounded-[2rem] z-40"
+          onClick={() => {
+            setIsDropdownOpen(true);
+          }}
+          ref={dropdownRef}
         >
           <img
             src={user?.farcaster?.pfp!}
             alt="icon"
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-8 h-8 rounded-full object-cover"
           />
           {user?.farcaster?.username}
           <div
@@ -108,7 +118,7 @@ export default function Hero() {
               <li>
                 <button
                   type="button"
-                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-200 hover:text-neutral-800 z-30"
+                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-100 hover:text-neutral-800 z-30"
                   onClick={() => {
                     router.push(`/${user?.farcaster?.username}`);
                   }}
@@ -119,7 +129,7 @@ export default function Hero() {
               <li>
                 <button
                   type="button"
-                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-200 hover:text-neutral-800 z-30"
+                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-100 hover:text-neutral-800 z-30"
                   onClick={logout}
                 >
                   Logout
@@ -127,8 +137,15 @@ export default function Hero() {
               </li>
             </ul>
           </div>
-        </button>
+        </div>
       )}
+      <Link
+        className="flex w-fit gap-3 mt-4 text-[#9c62ff] font-medium items-center z-30 hover-arrow"
+        href=""
+        target="_blank"
+      >
+        Watch video <FaArrowRightLong className="mt-[2px] arrow" />
+      </Link>
       <img
         src={featuredProfiles[0].pfp}
         alt="pfp"
@@ -161,13 +178,6 @@ export default function Hero() {
           router.push(`/${featuredProfiles[2].username}`);
         }}
       />
-      <Link
-        className="flex w-fit gap-3 text-[#9c62ff] font-medium items-center z-30 hover-arrow"
-        href=""
-        target="_blank"
-      >
-        Watch video <FaArrowRightLong className="mt-[2px] arrow" />
-      </Link>
       <img
         src="/assets/ring.png"
         alt="ring"

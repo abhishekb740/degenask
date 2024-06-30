@@ -27,13 +27,13 @@ const Input = ({ id, name, label, placeholder, type, onChange, value, helper, su
           id={id}
           name={name}
           onChange={onChange}
-          className="font-primary text-neutral-800 bg-[#F6F6F6] text-sm placeholder:text-neutral-400 focus:outline-none block w-[60%] xl:w-[70%] px-2.5 py-3.5"
+          className={`font-primary text-neutral-800 bg-[#F6F6F6] text-sm placeholder:text-neutral-400 focus:outline-none block ${suffix ? "w-[60%] xl:w-[70%]" : "w-full"} px-2.5 py-3.5`}
           placeholder={placeholder}
           type={type}
           value={value}
           required
         />
-        <p className="min-w-[10%]">{suffix}</p>
+        {suffix && <p className="min-w-[10%]">{suffix}</p>}
       </div>
       <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>
     </div>

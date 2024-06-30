@@ -42,18 +42,19 @@ export default function Profile({
   const setAuthMethod = useSetAtom(authMethodAtom);
   const questions = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
-  const { username, address, price } = user;
+  const { username, feeAddress, fees } = user;
   const { user: fcUser } = usePrivy();
 
   useEffect(() => {
-    if (address === null || price === null) {
+    if (feeAddress === null || fees === null) {
       if (username === fcUser?.farcaster?.username) {
         setAuth("setup");
-        setAuthMethod("edit");
+        setAuthMethod("initial");
         router.push(`/setup/${user.username}`);
+        return;
       }
     }
-  }, [address, price]);
+  }, [feeAddress, fees]);
 
   useEffect(() => {
     setUser(user);
@@ -76,7 +77,7 @@ export default function Profile({
         {isLoading ? (
           <AskSkeleton />
         ) : fcUser?.farcaster?.username === user.username ? (
-          <Account user={user} />
+          <Account />
         ) : (
           <Ask user={user} />
         )}

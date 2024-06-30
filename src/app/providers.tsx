@@ -5,6 +5,9 @@ import { RainbowKitProvider, darkTheme, getDefaultConfig } from "@rainbow-me/rai
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { sepolia } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
+import { useSetAtom } from "jotai";
+import { degenPrice } from "@/store";
+import { useEffect } from "react";
 
 const config = getDefaultConfig({
   appName: "Degenask",
@@ -13,8 +16,18 @@ const config = getDefaultConfig({
   ssr: true,
 });
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  children,
+  degenPriceUsd,
+}: {
+  children: React.ReactNode;
+  degenPriceUsd: number;
+}) {
   const queryClient = new QueryClient();
+  const setDegenPrice = useSetAtom(degenPrice);
+  useEffect(() => {
+    setDegenPrice(degenPriceUsd);
+  }, [degenPriceUsd]);
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

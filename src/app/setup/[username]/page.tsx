@@ -1,5 +1,5 @@
-import { getAllUsers, getUser, getUserData } from "@/app/_actions/queries";
-import { User } from "@/types";
+import { getAllUsers, getUser, getUserData, getv1User } from "@/app/_actions/queries";
+import { User, Userv1 } from "@/types";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -61,6 +61,7 @@ export default async function Setup({ params }: Props) {
     const user = await getUser(params.username);
     const profile = await getUserData(params.username);
     const users = await getAllUsers();
+    const userv1 = await getv1User(params.username);
     if (user?.[0] && profile) {
       return (
         <SetupProfile
@@ -74,6 +75,7 @@ export default async function Setup({ params }: Props) {
             followings: profile.Socials.Social[0].followingCount,
           }}
           users={users as User[]}
+          userv1={userv1?.[0] as Userv1}
         />
       );
     } else {

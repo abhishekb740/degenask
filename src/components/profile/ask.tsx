@@ -24,7 +24,7 @@ const Connect = dynamic(() => import("@/components/shared/connect"), {
 const customToolbar = [["bold", "italic", "underline", "code-block"]];
 
 export default function AskQuestion({ user }: { user: User }) {
-  const { price, username: creatorUsername, address: creatorAddress } = user;
+  const { fees, username: creatorUsername, address: creatorAddress } = user;
   const headshotData = useAtomValue(headshotAtom);
   const { name } = headshotData;
   const [balance, setBalance] = useState<number>();
@@ -84,7 +84,7 @@ export default function AskQuestion({ user }: { user: User }) {
       address: TokenContract,
       abi: TokenABI,
       functionName: "approve",
-      args: [DegenaskContract, parseEther(String(price))],
+      args: [DegenaskContract, parseEther(String(fees))],
     }).catch((error) => {
       setIsLoading(false);
       toast.error("User rejected the request", {
@@ -107,7 +107,7 @@ export default function AskQuestion({ user }: { user: User }) {
       address: DegenaskContract,
       abi: DegenaskABI,
       functionName: "askQuestion",
-      args: [Number(questionId), creatorAddress, parseEther(String(price))],
+      args: [Number(questionId), creatorAddress, parseEther(String(fees))],
     }).catch((error) => {
       setIsLoading(false);
       toast.error("User rejected the request", {
@@ -125,7 +125,7 @@ export default function AskQuestion({ user }: { user: User }) {
       creatorUsername,
       creatorAddress,
       address as string,
-      price,
+      fees,
     );
     if (response.status === 201) {
       toast.success("Saved successfully", {
@@ -139,7 +139,7 @@ export default function AskQuestion({ user }: { user: User }) {
       questionId,
       content: questionContent,
       creatorUsername,
-      price,
+      price: fees,
       createdAt: new Date().toISOString(),
       creatorAddress,
       authorAddress: address as string,
@@ -200,10 +200,10 @@ export default function AskQuestion({ user }: { user: User }) {
       ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
         <Button
           id="askQuestion"
-          title={isLoading ? "Posting question..." : `Ask with ${price} DEGEN`}
+          title={isLoading ? "Posting question..." : `Ask with ${fees} DEGEN`}
           disabled={isLoading || !questionContent}
           onClick={() => {
-            if (balance && Number(balance) >= price) {
+            if (balance && Number(balance) >= fees) {
               setIsLoading(true);
               getApproval();
             } else {
@@ -216,7 +216,7 @@ export default function AskQuestion({ user }: { user: User }) {
           }}
         />
       ) : (
-        <Connect label={`Ask with ${price} DEGEN`} />
+        <Connect label={`Ask with ${fees} DEGEN`} />
       )}
     </div>
   );

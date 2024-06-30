@@ -3,7 +3,7 @@
 import { account, publicClient, walletClient } from "@/utils/config";
 import { DegenaskABI, DegenaskContract } from "@/utils/constants";
 import { formatAddress } from "@/utils/helper";
-import { client } from "@/utils/supabase/client";
+import { client, clientv1 } from "@/utils/supabase/client";
 
 export const getUserData = async (username: string) => {
   const query = `query MyQuery {
@@ -68,6 +68,23 @@ export const getQuestions = async (username: string) => {
   return data;
 };
 
+export const getv1User = async (username: string) => {
+  const { data } = await clientv1
+    .from("farstackUser")
+    .select("*")
+    .eq("username", username)
+    .eq("isMarked", false);
+  return data;
+};
+
+export const updatev1User = async (username: string) => {
+  const response = await clientv1
+    .from("farstackUser")
+    .update({ isMarked: true })
+    .eq("username", username);
+  return response;
+};
+
 export const setAnswer = async (
   questionId: string,
   content: string,
@@ -83,19 +100,28 @@ export const setAnswer = async (
   return response;
 };
 
-export const setCreator = async (username: string) => {
+export const setCreator = async (username: string, pfp: string) => {
   const response = await client.from("creators").insert({
     username,
+    pfp,
   });
   return response;
 };
 
-export const updateCreator = async (username: string, address: string, price: number) => {
+export const updateCreator = async (
+  username: string,
+  feeAddress: string,
+  address: string,
+  fees: number,
+  pfp: string,
+) => {
   const response = await client
     .from("creators")
     .update({
       address,
-      price,
+      feeAddress,
+      fees,
+      pfp,
     })
     .eq("username", username);
   return response;
@@ -190,3 +216,12 @@ export const signAnswer = async (questionId: string) => {
     return { status: 400 };
   }
 };
+
+export async function fetchPrice() {
+  const response = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=degen-base&vs_currencies=usd",
+  );
+  const data = await response.json();
+  const price = data["degen-base"].usd;
+  return price;
+}

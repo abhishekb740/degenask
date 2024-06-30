@@ -2,14 +2,16 @@
 "use client";
 import Button from "@/components/form/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { authAtom, authMethodAtom, headshotAtom } from "@/store";
+import { authAtom, authMethodAtom, degenPrice, headshotAtom, userAtom } from "@/store";
 import { User } from "@/types";
 import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-export default function Account({ user }: { user: User }) {
-  const { price, username: creatorUsername, address: creatorAddress } = user;
+export default function Account() {
+  const user = useAtomValue(userAtom);
   const headshotData = useAtomValue(headshotAtom);
+  const degenPriceUsd = useAtomValue(degenPrice);
+  const { fees, username: creatorUsername, feeAddress } = user;
   const { name } = headshotData;
   const setAuth = useSetAtom(authAtom);
   const setAuthMethod = useSetAtom(authMethodAtom);
@@ -33,13 +35,13 @@ export default function Account({ user }: { user: User }) {
       <div className="flex flex-col gap-2">
         <span className="bg-[#F6F6F6] text-lg p-4 font-medium rounded-xl truncate">
           <p className="text-neutral-500 text-md font-regular">Address to receive Funds</p>
-          {creatorAddress}
+          {feeAddress}
         </span>
         <span className="bg-[#F6F6F6] text-lg p-4 font-medium rounded-xl">
           <p className="text-neutral-500 text-md font-regular">Price to Ask</p>
           <span className="flex flex-row items-center justify-between">
-            {price} DEGEN
-            <p className="text-neutral-400">{(price * user.degen).toFixed(2)} USD</p>
+            {fees} DEGEN
+            <p className="text-neutral-400">{(fees * degenPriceUsd).toFixed(2)} USD</p>
           </span>
         </span>
       </div>

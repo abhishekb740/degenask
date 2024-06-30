@@ -210,9 +210,10 @@ export default function Feed({ key, question }: { key: string; question: Questio
       setProfile({
         username: profile.username,
         address: profile.address,
-        price: profile.price,
+        fees: profile.fees,
         count: profile.count + 1,
-        degen: profile.degen,
+        feeAddress: profile.feeAddress,
+        pfp: profile.pfp,
       });
     }
     setIsLoading(false);

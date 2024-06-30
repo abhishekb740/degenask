@@ -2,7 +2,17 @@ export interface User {
   username: string;
   count: number;
   address: string;
+  fees: number;
+  feeAddress: string;
+  pfp: string;
+}
+
+export interface Userv1 {
+  username: string;
+  count: number;
+  address: string;
   price: number;
+  isMarked: boolean;
   degen: number;
 }
 
