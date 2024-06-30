@@ -17,12 +17,12 @@ const Input = ({ id, name, label, placeholder, type, onChange, value, helper, su
     <div className="w-full">
       <label
         htmlFor={id}
-        className="text-neutral-500 text-sm md:text-lg"
+        className="text-neutral-500 text-sm md:text-lg mb-2"
         style={{ marginRight: 0 }}
       >
         {label}
       </label>
-      <div className="flex flex-row w-full items-center justify-between mt-2 bg-[#F6F6F6] text-neutral-500 rounded-xl px-2.5">
+      <div className="flex flex-row w-full items-center justify-between bg-[#F6F6F6] text-neutral-500 rounded-xl px-2.5">
         <input
           id={id}
           name={name}
@@ -35,7 +35,7 @@ const Input = ({ id, name, label, placeholder, type, onChange, value, helper, su
         />
         {suffix && <p className="min-w-[10%]">{suffix}</p>}
       </div>
-      <div className="text-sm mt-1 font-primary text-neutral-400">{helper}</div>
+      <div className="text-sm mt-1 pl-2 font-primary text-neutral-400">{helper}</div>
     </div>
   );
 };

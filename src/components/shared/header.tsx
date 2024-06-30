@@ -23,7 +23,7 @@ export default function Header({ users }: { users: User[] }) {
   const setAuthMethod = useSetAtom(authMethodAtom);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebounceValue("", 500);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebounceValue("", 200);
   const filteredUsers = users.filter((user) => user.username.includes(searchQuery.toLowerCase()));
   const globalUsers = [...filteredUsers, ...fcUsers];
 
@@ -144,7 +144,11 @@ export default function Header({ users }: { users: User[] }) {
                     <button
                       key={key}
                       className="flex flex-row gap-3 hover:bg-neutral-100 items-center w-full px-5 py-2 cursor-pointer"
-                      onClick={() => router.push(`/${user?.username}`)}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setDebouncedSearchQuery("");
+                        router.push(`/${user?.username}`);
+                      }}
                     >
                       <img
                         alt={user?.username}

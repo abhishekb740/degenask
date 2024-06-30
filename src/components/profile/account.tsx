@@ -21,14 +21,14 @@ export default function Account() {
       <span className="flex flex-row w-full items-center justify-between">
         <h3 className="text-xl text-neutral-500">{name}&apos;s Degenask</h3>
         <button
-          className="flex flex-row gap-2 w-fit text-violet-500 hover:text-violet-600 items-center justify-center"
+          className="flex flex-row gap-2 w-fit text-violet-500 hover:text-violet-600 items-center justify-center font-medium"
           onClick={() => {
             setAuth("setup");
             setAuthMethod("edit");
             router.push(`/setup/${creatorUsername}`);
           }}
         >
-          <FaRegEdit /> Edit price
+          <FaRegEdit /> Edit account
         </button>
       </span>
       <div className="flex flex-col gap-2">
@@ -43,6 +43,11 @@ export default function Account() {
             <p className="text-neutral-400">{(fees * degenPriceUsd).toFixed(2)} USD</p>
           </span>
         </span>
+        <p className="text-sm text-neutral-500">
+          {" "}
+          <b className="font-medium text-violet-400">NOTE:</b> Reminder to answer questions within 2
+          days otherwise it will expire.
+        </p>
       </div>
       <Button
         id="share"

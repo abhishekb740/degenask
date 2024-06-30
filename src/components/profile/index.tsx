@@ -28,11 +28,13 @@ export default function Profile({
   profile,
   questions: posts,
   users,
+  isNew,
 }: {
   user: User;
   profile: UserData;
   questions: Questions;
   users: User[];
+  isNew: boolean;
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -79,7 +81,7 @@ export default function Profile({
         ) : fcUser?.farcaster?.username === user.username ? (
           <Account />
         ) : (
-          <Ask user={user} />
+          <Ask user={user} isNew={isNew} />
         )}
       </div>
       <span className="flex w-full items-start justify-start mt-14 mb-5">

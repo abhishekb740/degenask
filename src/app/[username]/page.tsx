@@ -1,7 +1,15 @@
 import { Questions, User } from "@/types";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getAllUsers, getQuestions, getUser, getUserData } from "../_actions/queries";
+import {
+  fetchFCProfile,
+  getAllUsers,
+  getQuestions,
+  getUser,
+  getUserData,
+} from "../_actions/queries";
+import { FaArrowRightLong } from "react-icons/fa6";
+import Link from "next/link";
 
 type Props = {
   params: {
@@ -15,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const username = params.username;
   const profile = await getUserData(username);
   return {
-    title: `${profile?.Socials?.Social[0]?.profileDisplayName} | Degenask`,
-    icons: profile?.Socials?.Social[0]?.profileImage,
+    title: `${profile?.Socials?.Social ? `${profile?.Socials?.Social[0]?.profileDisplayName} | Degenask` : "Degenask"}`,
+    icons: `${profile?.Socials?.Social ? `${profile?.Socials?.Social[0]?.profileImage}` : "/degenask.png"}`,
     description:
       "Earn $DEGEN for answering questions and ask anything to your favourite creators that you're curious about",
     openGraph: {
@@ -25,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: process.env.NEXT_PUBLIC_HOST_URL,
       siteName: "Degenask",
       images: {
-        url: `${process.env.NEXT_PUBLIC_HOST_URL}/api/getOg?username=${username}`,
+        url: `${profile?.Socials?.Social ? `${process.env.NEXT_PUBLIC_HOST_URL}/api/getOg?username=${username}` : `${process.env.NEXT_PUBLIC_HOST_URL}/metadata/degenaskv2.gif`}`,
         alt: "Degenask",
       },
     },
@@ -59,10 +67,10 @@ const Profile = dynamic(() => import("@/components/profile"), {
 export default async function Creator({ params }: Props) {
   try {
     const user = await getUser(params.username);
-    const questions = await getQuestions(params.username);
-    const profile = await getUserData(params.username);
-    const users = await getAllUsers();
-    if (user?.[0] && questions && profile) {
+    if (user?.[0]) {
+      const questions = await getQuestions(params.username);
+      const profile = await getUserData(params.username);
+      const users = await getAllUsers();
       return (
         <Profile
           user={user?.[0] as User}
@@ -76,16 +84,52 @@ export default async function Creator({ params }: Props) {
           }}
           questions={questions as Questions}
           users={users as User[]}
+          isNew={false}
         />
       );
     } else {
-      return (
-        <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
-          <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
-            404: User not found
-          </h1>
-        </main>
-      );
+      const fcProfile = await fetchFCProfile(params.username);
+      const questions = await getQuestions(params.username);
+      const users = await getAllUsers();
+      if (fcProfile) {
+        return (
+          <Profile
+            user={{
+              username: fcProfile.username,
+              feeAddress: fcProfile.verifications[0],
+              address: fcProfile.verifications[0],
+              count: 0,
+              fees: 20,
+              pfp: fcProfile.pfp.url,
+            }}
+            profile={{
+              username: fcProfile.username,
+              name: fcProfile.displayName,
+              bio: fcProfile.profile.bio.text,
+              image: fcProfile.pfp.url,
+              followers: fcProfile.followerCount,
+              followings: fcProfile.followingCount,
+            }}
+            questions={questions as Questions}
+            users={users as User[]}
+            isNew={true}
+          />
+        );
+      } else {
+        return (
+          <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-20">
+            <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
+              404: User not found
+            </h1>
+            <Link
+              href="/"
+              className="flex my-5 w-fit gap-3 px-8 py-3.5 items-center font-medium font-primary text-neutral-100 bg-[#9c62ff] hover:text-gray-50 shadow hover:shadow-xl rounded-[2rem] hover-arrow"
+            >
+              Back to Home <FaArrowRightLong className="mt-[2px] arrow" />
+            </Link>
+          </main>
+        );
+      }
     }
   } catch (e) {
     return (
@@ -93,6 +137,12 @@ export default async function Creator({ params }: Props) {
         <h1 className="text-[2.5rem] font-title font-semibold text-neutral-700">
           404: User not found
         </h1>
+        <Link
+          href="/"
+          className="flex my-5 w-fit gap-3 px-8 py-3.5 items-center font-medium font-primary text-neutral-100 bg-[#9c62ff] hover:text-gray-50 shadow hover:shadow-xl rounded-[2rem] hover-arrow"
+        >
+          Back to Home <FaArrowRightLong className="mt-[2px] arrow" />
+        </Link>
       </main>
     );
   }

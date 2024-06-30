@@ -21,8 +21,8 @@ export const featuredProfiles = [
   },
 ];
 
-export const DegenaskContract = "0xED268AAdAcf0c8A323431FA4ae143dB02090EB1a";
-export const TokenContract = "0x904998Cd1A44Db5097140f916Fbd6C6d7F102084";
+export const DegenaskContract = "0x2aB1841E3ee8D7E145F3df7600DF14FE53050e2d";
+export const TokenContract = "0x3A46a33E68954C51A013a4a3c41a3f92A024B160";
 
 export const DegenaskABI = [
   {
@@ -592,4 +592,17 @@ export const TokenABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+];
+
+export const GradientBucket = [
+  "linear-gradient(to top left, #2193b0, #6dd5ed)",
+  "linear-gradient(to top left, #cc2b5e, #753a88)",
+  "linear-gradient(to top left, #ee9ca7, #ffdde1)",
+  "linear-gradient(to top left, #de6262, #ffb88c)",
+  "linear-gradient(to top left, #eecda3, #ef629f)",
+  "linear-gradient(to top left, #4568dc, #b06ab3)",
+  "linear-gradient(to top left, #dd5e89 , #f7bb97)",
+  "linear-gradient(to top left, #7b4397, #dc2430)",
+  "linear-gradient(to top left, #ff512f, #dd2476)",
+  "linear-gradient(to top left, #ff9966, #ff5e62)",
 ];

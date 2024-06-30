@@ -24,12 +24,15 @@ export interface Question {
   questionId: string;
   content: string;
   creatorUsername: string;
+  authorUsername: string;
   price: number;
   createdAt: string;
   creatorAddress: string;
   authorAddress: string;
   isAnswered: boolean;
   whitelistedAddresses: string[];
+  isAnonAsk: boolean;
+  authorPfp: string;
 }
 
 export type Questions = Question[];

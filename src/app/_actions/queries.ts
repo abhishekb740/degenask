@@ -1,9 +1,12 @@
 "use server";
 
-import { account, publicClient, walletClient } from "@/utils/config";
-import { DegenaskABI, DegenaskContract } from "@/utils/constants";
+import { publicClient } from "@/utils/config";
+import { DegenaskABI, DegenaskContract, TokenContract } from "@/utils/constants";
 import { formatAddress } from "@/utils/helper";
 import { client, clientv1 } from "@/utils/supabase/client";
+import { Hex, createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { baseSepolia } from "viem/chains";
 
 export const getUserData = async (username: string) => {
   const query = `query MyQuery {
@@ -144,16 +147,22 @@ export const setQuestion = async (
   creatorAddress: string,
   address: string,
   price: number,
+  isAnonAsk: boolean,
+  authorUsername: string,
+  authorPfp: string,
 ) => {
   const url = "https://api.neynar.com/v2/farcaster/cast";
   const response = await client.from("questions").insert({
     questionId,
     content,
     creatorUsername,
+    authorUsername,
+    authorPfp,
     creatorAddress,
     authorAddress: address,
     isAnswered: false,
     price,
+    isAnonAsk,
     whitelistedAddresses: [],
   });
   const options = {
@@ -166,7 +175,12 @@ export const setQuestion = async (
     body: JSON.stringify({
       parent_author_fid: 541325,
       signer_uuid: `${process.env.NEYNAR_SIGNER_UUID}`,
-      text: `Hey @${creatorUsername}, You have been asked a new question by ${formatAddress(address)} on degenask.me/${creatorUsername}`,
+      text: `Hey @${creatorUsername}, You have been asked a new question by ${isAnonAsk ? "anon" : authorUsername ? `@${authorUsername}` : formatAddress(address)} on degenask.me/${creatorUsername}`,
+      embeds: [
+        {
+          url: `https://degenask.me/${creatorUsername}`,
+        },
+      ],
     }),
   };
   if (response.status === 201) {
@@ -199,14 +213,23 @@ export const updateStatus = async (questionId: string) => {
   return response;
 };
 
-export const signAnswer = async (questionId: string) => {
+const account = privateKeyToAccount(`${process.env.PRIVATE_KEY as Hex}`);
+
+const walletClient = createWalletClient({
+  account,
+  chain: baseSepolia,
+  transport: http(),
+});
+
+export const signAnswer = async (questionId: string, isAnonAsk: boolean) => {
+  const contract = isAnonAsk ? "anonAnswerQuestion" : "answerQuestion";
   try {
     const { request }: any = await publicClient.simulateContract({
       account,
       address: DegenaskContract,
       abi: DegenaskABI,
-      functionName: "answerQuestion",
-      args: [questionId],
+      functionName: contract,
+      args: [questionId, TokenContract],
     });
     const transaction = await walletClient.writeContract(request);
     if (transaction) {
@@ -223,8 +246,8 @@ export const fetchPrice = async () => {
   );
   const data = await response.json();
   let price = 0;
-  if (data.status.error_code === 429) {
-    price = 0.01;
+  if (data?.status?.error_code === 429) {
+    price = 0.008;
   } else {
     price = data["degen-base"]?.usd;
   }
@@ -243,6 +266,46 @@ export const fetchProfile = async (query: string) => {
     );
     const data = await response.json();
     return data.result.users;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const fetchFCProfile = async (username: string) => {
+  const options = {
+    method: "GET",
+    headers: { accept: "application/json", api_key: `${process.env.NEYNAR_API_KEY}` },
+  };
+  try {
+    const response = await fetch(
+      `https://api.neynar.com/v1/farcaster/user-by-username?username=${username}`,
+      options,
+    );
+    const data = await response.json();
+    if (data?.code) {
+      return null;
+    }
+    return data.result.user;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const fetchFCProfileByAddress = async (address: string) => {
+  const options = {
+    method: "GET",
+    headers: { accept: "application/json", api_key: `${process.env.NEYNAR_API_KEY}` },
+  };
+  try {
+    const response = await fetch(
+      `https://api.neynar.com/v2/farcaster/user/bulk-by-address?addresses=${address}`,
+      options,
+    );
+    const data = await response.json();
+    if (data?.code) {
+      return null;
+    }
+    return data[address];
   } catch (error) {
     return null;
   }
