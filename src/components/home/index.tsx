@@ -141,7 +141,7 @@ export default function Hero() {
       )}
       <Link
         className="flex w-fit gap-3 mt-4 text-[#9c62ff] font-medium items-center z-30 hover-arrow"
-        href=""
+        href="https://youtu.be/w8vozS5spbA"
         target="_blank"
       >
         Watch video <FaArrowRightLong className="mt-[2px] arrow" />
