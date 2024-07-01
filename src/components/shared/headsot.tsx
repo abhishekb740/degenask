@@ -2,6 +2,7 @@
 "use client";
 
 import { headshotAtom } from "@/store";
+import { formatNumber } from "@/utils/helper";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,15 +23,19 @@ export default function Headshot() {
         <p className="text-neutral-500">{headshotData.bio}</p>
         <div className="flex sm:flex-row md:flex-col lg:flex-row gap-4">
           <span className="inline-flex gap-2.5 items-center text-neutral-500">
-            Followers <p className="text-[#A36EFD]">{headshotData.followers}</p>
+            Followers <p className="text-[#A36EFD]">{formatNumber(headshotData.followers)}</p>
           </span>
           <span className="inline-flex gap-2.5 items-center text-neutral-500">
-            Followings <p className="text-[#A36EFD]">{headshotData.followings}</p>
+            Followings <p className="text-[#A36EFD]">{formatNumber(headshotData.followings)}</p>
           </span>
         </div>
       </div>
-      <Link href={`https://warpcast.com/${headshotData.username}`} className="mt-6" target="_blank">
-        <Image src="/warpcast.svg" alt="setup" width={25} height={25} />
+      <Link
+        href={`https://warpcast.com/${headshotData.username}`}
+        className="mt-6 w-fit"
+        target="_blank"
+      >
+        <Image src="/icons/warpcast.svg" alt="setup" width={25} height={25} />
       </Link>
     </div>
   );
