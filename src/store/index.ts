@@ -5,12 +5,15 @@ export const authAtom = atom<string>("");
 
 export const authMethodAtom = atom<string>("");
 
+export const degenPrice = atom<number>(0);
+
 export const userAtom = atom<User>({
   username: "",
   count: 0,
   address: "",
-  price: 0,
-  degen: 0,
+  fees: 0,
+  feeAddress: "",
+  pfp: "",
 });
 
 export const headshotAtom = atom<UserData>({

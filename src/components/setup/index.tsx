@@ -3,14 +3,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Layout from "../layout";
+import Container from "../container";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { authAtom, headshotAtom } from "@/store";
 import HeadshotSkeleton from "../shared/skeletons/headshot";
 import SetProfile from "./setup";
-import { User, UserData } from "@/types";
+import { User, UserData, Userv1 } from "@/types";
 
 const Headshot = dynamic(() => import("@/components/shared/headsot"), {
   loading: () => <HeadshotSkeleton />,
@@ -20,16 +20,17 @@ export default function SetupProfile({
   user,
   profile,
   users,
+  userv1,
 }: {
   user: User;
   profile: UserData;
   users: User[];
+  userv1: Userv1;
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setHeadshot = useSetAtom(headshotAtom);
   const auth = useAtomValue(authAtom);
-
   if (auth !== "setup") {
     router.push("/");
   }
@@ -47,11 +48,11 @@ export default function SetupProfile({
   }, [profile]);
 
   return (
-    <Layout users={users}>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl">
+    <Container users={users}>
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white mb-8 md:mb-0 p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl border border-neutral-100 shadow-xl mt-20">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
-        <SetProfile user={user} />
+        <SetProfile user={user} userv1={userv1} />
       </div>
-    </Layout>
+    </Container>
   );
 }

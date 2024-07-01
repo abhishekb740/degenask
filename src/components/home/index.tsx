@@ -1,44 +1,28 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
-import { useState } from "react";
+import { useLogin, useLogout, usePrivy } from "@privy-io/react-auth";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import FarcasterIcon from "@/icons/farcaster";
 import toast from "react-hot-toast";
 import { User } from "@/types";
 import { useSetAtom } from "jotai";
 import { authAtom, authMethodAtom } from "@/store";
-import { setCreator } from "@/app/_actions/queries";
+import { getUser, setCreator } from "@/app/_actions/queries";
+import { FaArrowRightLong } from "react-icons/fa6";
+import Link from "next/link";
+import { featuredProfiles } from "@/utils/constants";
 
-const OGs = [
-  {
-    pfp: "https://i.imgur.com/rOy7TtZ.gif",
-    username: "jessepolak",
-  },
-  {
-    pfp: "https://i.imgur.com/liviil4.jpg",
-    username: "jacek",
-  },
-  {
-    pfp: "https://i.imgur.com/vHVlojT.gif",
-    username: "markfishman",
-  },
-  {
-    pfp: "https://i.imgur.com/Ut3XLfb.gif",
-    username: "proxystudio.eth",
-  },
-];
-
-export default function Hero({ users }: { users: User[] }) {
+export default function Hero() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const { ready, authenticated, user, createWallet } = usePrivy();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const { ready, authenticated, user } = usePrivy();
   const setAuth = useSetAtom(authAtom);
   const setAuthMethod = useSetAtom(authMethodAtom);
-  const { wallets } = useWallets();
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const setProfile = async () => {
-    const response = await setCreator(user?.farcaster?.username!);
+    const response = await setCreator(user?.farcaster?.username!, user?.farcaster?.pfp!);
     if (response.status === 201) {
       toast.success("User created successfully", {
         style: {
@@ -54,17 +38,9 @@ export default function Hero({ users }: { users: User[] }) {
 
   const { login } = useLogin({
     async onComplete(user) {
-      if (authenticated) {
-        if (wallets.length === 0) {
-          const res = createWallet();
-        }
-      }
-      setIsLoggedIn(true);
+      const isUserExist = await getUser(user?.farcaster?.username!);
       if (user) {
-        const isExist = users.find(
-          (profile: User) => profile.username === user?.farcaster?.username,
-        );
-        if (isExist) {
+        if (isUserExist?.[0]) {
           router.push(`/${user?.farcaster?.username}`);
           return;
         }
@@ -72,7 +48,7 @@ export default function Hero({ users }: { users: User[] }) {
       await setProfile();
     },
     onError(error) {
-      toast.error("Encountered with login error, try again!", {
+      toast.error("Failed to login, try again!", {
         style: {
           borderRadius: "10px",
         },
@@ -81,56 +57,142 @@ export default function Hero({ users }: { users: User[] }) {
     },
   });
 
+  const { logout } = useLogout({
+    onSuccess: () => {
+      setIsDropdownOpen(false);
+    },
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-10 md:px-20 bg-[#4C2897]">
-      <span className="flex flex-row gap-2 items-center justify-center mt-10 mb-20">
+    <main className="flex h-[100vh] overflow-hidden flex-col items-center justify-center gap-5 px-7 md:px-20">
+      <span className="flex flex-row gap-2 items-center justify-center mb-20">
         <img src="/degenask.png" className="w-6 h-6 object-cover" alt="logo" />
-        <p className="text-white text-2xl font-title">degenask.me</p>
+        <p className="text-2xl font-primary font-semibold">degenask.me</p>
       </span>
-      <h1 className="text-[2rem] md:text-[3rem] text-center font-primary font-semibold text-neutral-200">
-        Get paid to answer questions <br /> through <span className="text-[#A36EFD]">Degen</span>
+      <h1 className="text-[2rem] md:text-[4rem] text-center font-title font-semibold leading-snug text-neutral-800">
+        Get paid <span className="text-[#9c62ff] font-primary">$DEGEN</span> <br /> to answer
+        questions
       </h1>
-      {!isLoggedIn ? (
+      {!authenticated ? (
         <button
-          className="flex my-5 w-fit gap-3 px-5 py-3.5 items-center font-primary text-neutral-100 bg-[#A36EFD] hover:text-gray-50 hover:shadow-lg rounded-xl"
+          className="flex my-5 w-fit gap-3 px-8 py-3.5 items-center font-medium font-primary text-neutral-100 bg-[#9c62ff] hover:text-gray-50 shadow hover:shadow-xl rounded-[2rem] z-30"
           onClick={login}
           disabled={!ready && authenticated}
         >
           <FarcasterIcon className="w-5 h-5" color="#ffffff" />
-          Sign in to Create a Page
+          Start earning
         </button>
       ) : (
-        <div>
-          <button className="block w-fit px-5 py-3 font-primary text-neutral-50 bg-[#A36EFD] rounded-lg">
-            <span className="flex flex-row items-center gap-x-3">
-              <img
-                src={user?.farcaster?.pfp!}
-                alt="icon"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              {user?.farcaster?.username}
-            </span>
-          </button>
+        <div
+          className="relative flex flex-row items-center gap-x-3 w-fit px-8 py-3 font-medium font-primary text-neutral-50 bg-[#9c62ff] rounded-[2rem] z-40"
+          onClick={() => {
+            setIsDropdownOpen(true);
+          }}
+          ref={dropdownRef}
+        >
+          <img
+            src={user?.farcaster?.pfp!}
+            alt="icon"
+            className="w-8 h-8 rounded-full object-cover"
+          />
+          {user?.farcaster?.username}
+          <div
+            className={`${
+              isDropdownOpen ? "block absolute" : "hidden"
+            }  mt-[9.5rem] left-0 z-10 divide-y divide-gray-100 rounded-lg shadow w-40 bg-neutral-50 font-primary`}
+          >
+            <ul className="py-1 text-sm text-neutral-700" aria-labelledby="dropdown-button">
+              <li>
+                <button
+                  type="button"
+                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-100 hover:text-neutral-800 z-30"
+                  onClick={() => {
+                    router.push(`/${user?.farcaster?.username}`);
+                  }}
+                >
+                  My profile
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="inline-flex w-full px-4 py-2 hover:bg-neutral-100 hover:text-neutral-800 z-30"
+                  onClick={logout}
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       )}
-      <div className="flex flex-col gap-10 mb-10 md:mb-5">
-        <p className="text-white text-center text-lg font-primary">Ask some of our OGs</p>
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
-          {OGs.map((og) => (
-            <div key={og.username} className="flex flex-col justify-center items-center gap-2">
-              <img
-                src={og.pfp}
-                alt="pfp"
-                className="w-16 h-16 rounded-full cursor-pointer"
-                onClick={() => {
-                  router.push(`/${og.username}`);
-                }}
-              />
-              <span className="text-white">{og.username}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Link
+        className="flex w-fit gap-3 mt-4 text-[#9c62ff] font-medium items-center z-30 hover-arrow"
+        href=""
+        target="_blank"
+      >
+        Watch video <FaArrowRightLong className="mt-[2px] arrow" />
+      </Link>
+      <img
+        src={featuredProfiles[0].pfp}
+        alt="pfp"
+        className="absolute w-12 h-12 md:w-16 md:h-16 top-[10rem] sm:top-[8rem] md:top-[10rem] left-[2rem] sm:left-[8rem] md:left-[5rem] lg:left-[10rem] xl:left-[12rem] 2xl:left-[19rem] object-cover rounded-full cursor-pointer border border-neutral-100 shadow-xl z-30 animate-float"
+        onClick={() => {
+          router.push(`/${featuredProfiles[0].username}`);
+        }}
+      />
+      <img
+        src={featuredProfiles[1].pfp}
+        alt="pfp"
+        className="absolute w-12 h-12 md:w-16 md:h-16 bottom-[9rem] sm:bottom-[14rem] md:bottom-[8rem] lg:bottom-[10rem] left-[3rem] sm:left-[8rem] md:left-[10rem] lg:left-[19rem] xl:left-[23rem] 2xl:left-[35rem] object-cover rounded-full cursor-pointer border border-neutral-100 shadow-xl z-30 animate-wiggle"
+        onClick={() => {
+          router.push(`/${featuredProfiles[1].username}`);
+        }}
+      />
+      <img
+        src={featuredProfiles[3].pfp}
+        alt="pfp"
+        className="absolute w-12 h-12 md:w-16 md:h-16 top-[8rem] sm:top-[14rem] md:top-[10rem] right-[3rem] sm:right-[8rem] md:right-[5rem] lg:right-[19rem] xl:right-[23rem] 2xl:right-[35rem] object-cover rounded-full cursor-pointer border border-neutral-100 shadow-xl z-30 animate-float"
+        onClick={() => {
+          router.push(`/${featuredProfiles[3].username}`);
+        }}
+      />
+      <img
+        src={featuredProfiles[2].pfp}
+        alt="pfp"
+        className="absolute w-12 h-12 md:w-16 md:h-16 bottom-[8rem] sm:bottom-[8rem] md:bottom-[10rem] right-[3rem] sm:right-[6rem] md:right-[5rem] lg:right-[10rem] xl:right-[12rem] 2xl:right-[19rem] object-cover rounded-full cursor-pointer border border-neutral-100 shadow-xl z-30 animate-float"
+        onClick={() => {
+          router.push(`/${featuredProfiles[2].username}`);
+        }}
+      />
+      <img
+        src="/assets/ring.png"
+        alt="ring"
+        className="absolute hidden lg:flex w-full h-full z-10"
+      />
+      <img
+        src="/assets/ringMed.png"
+        alt="ring"
+        className="absolute hidden sm:flex lg:hidden w-full h-full z-10"
+      />
+      <img
+        src="/assets/ringMob.png"
+        alt="ring"
+        className="absolute flex sm:hidden w-full h-full z-10"
+      />
     </main>
   );
 }

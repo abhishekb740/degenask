@@ -9,7 +9,7 @@ import { authAtom, authMethodAtom, headshotAtom, questionsAtom, userAtom } from 
 import dynamic from "next/dynamic";
 import AskSkeleton from "./skeleton/ask";
 import { useRouter } from "next/navigation";
-import Layout from "../layout";
+import Container from "../container";
 import HeadshotSkeleton from "../shared/skeletons/headshot";
 import Account from "./account";
 import Feed from "./feed";
@@ -28,11 +28,13 @@ export default function Profile({
   profile,
   questions: posts,
   users,
+  isNew,
 }: {
   user: User;
   profile: UserData;
   questions: Questions;
   users: User[];
+  isNew: boolean;
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -42,18 +44,19 @@ export default function Profile({
   const setAuthMethod = useSetAtom(authMethodAtom);
   const questions = useAtomValue(questionsAtom);
   const setQuestions = useSetAtom(questionsAtom);
-  const { username, address, price } = user;
+  const { username, feeAddress, fees } = user;
   const { user: fcUser } = usePrivy();
 
   useEffect(() => {
-    if (address === null || price === null) {
+    if (feeAddress === null || fees === null) {
       if (username === fcUser?.farcaster?.username) {
         setAuth("setup");
-        setAuthMethod("edit");
+        setAuthMethod("initial");
         router.push(`/setup/${user.username}`);
+        return;
       }
     }
-  }, [address, price]);
+  }, [feeAddress, fees]);
 
   useEffect(() => {
     setUser(user);
@@ -70,15 +73,15 @@ export default function Profile({
   }, [user, posts, profile]);
 
   return (
-    <Layout users={users}>
-      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl shadow-xl mt-40">
+    <Container users={users}>
+      <div className="relative flex flex-col gap-3 md:flex-row bg-white p-6 sm:p-7 md:p-8 w-full font-primary rounded-3xl border border-neutral-100 shadow-xl mt-20">
         {isLoading ? <HeadshotSkeleton /> : <Headshot />}
         {isLoading ? (
           <AskSkeleton />
         ) : fcUser?.farcaster?.username === user.username ? (
-          <Account user={user} />
+          <Account />
         ) : (
-          <Ask user={user} />
+          <Ask user={user} isNew={isNew} />
         )}
       </div>
       <span className="flex w-full items-start justify-start mt-14 mb-5">
@@ -91,10 +94,10 @@ export default function Profile({
           return <Feed key={question.questionId} question={question} />;
         })
       ) : (
-        <p className="w-full text-start text-neutral-500">
+        <p className="w-full text-start mb-5 text-neutral-500">
           No question asked yet. You can be the first 👀
         </p>
       )}
-    </Layout>
+    </Container>
   );
 }

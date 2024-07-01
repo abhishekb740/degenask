@@ -36,3 +36,27 @@
   font-weight: 700;
   font-style: normal;
 }
+
+.hover-arrow .arrow {
+  transition: transform 0.3s ease-in-out;
+}
+
+.hover-arrow:hover .arrow {
+  transform: translateX(3px);
+}
+
+.custom-checkbox:checked {
+  background-color: #9c62ff;
+}
+
+.custom-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: white;
+  transform: translate(-50%, -50%);
+  border-radius: 0.125rem;
+}
