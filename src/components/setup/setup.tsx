@@ -189,7 +189,11 @@ export default function SetProfile({ user, userv1 }: { user: User; userv1: Userv
           <Button
             id="setCreator"
             title={
-              authMethod === "initial" ? (userv1 ? "Import data" : "Create a Page") : "Save price"
+              authMethod === "initial"
+                ? userv1
+                  ? "Import account"
+                  : "Create a Page"
+                : "Save price"
             }
           />
         ) : address && chainId === Number(process.env.NEXT_PUBLIC_CHAINID) ? (
@@ -199,8 +203,8 @@ export default function SetProfile({ user, userv1 }: { user: User; userv1: Userv
               authMethod === "initial"
                 ? userv1
                   ? isLoading
-                    ? "Importing data..."
-                    : "Import data"
+                    ? "Importing account..."
+                    : "Import account"
                   : isLoading
                     ? "Creating page..."
                     : "Create a Page"
@@ -237,7 +241,7 @@ export default function SetProfile({ user, userv1 }: { user: User; userv1: Userv
           />
         ) : (
           <Connect
-            label={`${authMethod === "initial" ? (userv1 ? "Import data" : "Create a Page") : "Save price"}`}
+            label={`${authMethod === "initial" ? (userv1 ? "Import account" : "Create a Page") : "Save price"}`}
           />
         )}
         {authMethod === "edit" && (

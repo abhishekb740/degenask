@@ -3,7 +3,7 @@
 import { PrivyProvider } from "@privy-io/react-auth";
 import { RainbowKitProvider, darkTheme, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { baseSepolia } from "wagmi/chains";
+import { base } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
 import { useSetAtom } from "jotai";
 import { degenPrice } from "@/store";
@@ -12,7 +12,7 @@ import { useEffect } from "react";
 const config = getDefaultConfig({
   appName: "Degenask",
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
-  chains: [baseSepolia],
+  chains: [base],
   ssr: true,
 });
 
@@ -40,7 +40,7 @@ export default function Providers({
                 accentColor: "#4C2897",
                 logo: "/degenask.png",
               },
-              defaultChain: baseSepolia,
+              defaultChain: base,
               loginMethods: ["farcaster"],
               embeddedWallets: {
                 createOnLogin: "all-users",

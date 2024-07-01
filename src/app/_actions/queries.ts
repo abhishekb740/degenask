@@ -6,7 +6,7 @@ import { formatAddress } from "@/utils/helper";
 import { client, clientv1 } from "@/utils/supabase/client";
 import { Hex, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
+import { base } from "viem/chains";
 
 export const getUserData = async (username: string) => {
   const query = `query MyQuery {
@@ -217,7 +217,7 @@ const account = privateKeyToAccount(`${process.env.PRIVATE_KEY as Hex}`);
 
 const walletClient = createWalletClient({
   account,
-  chain: baseSepolia,
+  chain: base,
   transport: http(),
 });
 

@@ -21,8 +21,8 @@ export const featuredProfiles = [
   },
 ];
 
-export const DegenaskContract = "0x2aB1841E3ee8D7E145F3df7600DF14FE53050e2d";
-export const TokenContract = "0x3A46a33E68954C51A013a4a3c41a3f92A024B160";
+export const DegenaskContract = "0x2aAb478d08a522d0B57dCb0E05F7ad43815De149";
+export const TokenContract = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed";
 
 export const DegenaskABI = [
   {
@@ -321,10 +321,12 @@ export const DegenaskABI = [
 
 export const TokenABI = [
   {
-    inputs: [{ internalType: "address", name: "initialOwner", type: "address" }],
+    inputs: [{ internalType: "uint256", name: "mintingAllowedAfter_", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "constructor",
   },
+  { inputs: [], name: "CheckpointUnorderedInsertion", type: "error" },
+  { inputs: [], name: "DegenMintCapExceeded", type: "error" },
   { inputs: [], name: "ECDSAInvalidSignature", type: "error" },
   {
     inputs: [{ internalType: "uint256", name: "length", type: "uint256" }],
@@ -334,6 +336,14 @@ export const TokenABI = [
   {
     inputs: [{ internalType: "bytes32", name: "s", type: "bytes32" }],
     name: "ECDSAInvalidSignatureS",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "increasedSupply", type: "uint256" },
+      { internalType: "uint256", name: "cap", type: "uint256" },
+    ],
+    name: "ERC20ExceededSafeSupply",
     type: "error",
   },
   {
@@ -389,6 +399,17 @@ export const TokenABI = [
   },
   {
     inputs: [
+      { internalType: "uint256", name: "timepoint", type: "uint256" },
+      { internalType: "uint48", name: "clock", type: "uint48" },
+    ],
+    name: "ERC5805FutureLookup",
+    type: "error",
+  },
+  { inputs: [], name: "ERC6372InconsistentClock", type: "error" },
+  { inputs: [], name: "EnforcedPause", type: "error" },
+  { inputs: [], name: "ExpectedPause", type: "error" },
+  {
+    inputs: [
       { internalType: "address", name: "account", type: "address" },
       { internalType: "uint256", name: "currentNonce", type: "uint256" },
     ],
@@ -396,6 +417,16 @@ export const TokenABI = [
     type: "error",
   },
   { inputs: [], name: "InvalidShortString", type: "error" },
+  {
+    inputs: [
+      { internalType: "uint256", name: "blockTimestamp", type: "uint256" },
+      { internalType: "uint256", name: "mintingAllowedAfter", type: "uint256" },
+    ],
+    name: "MintAllowedAfterDeployOnly",
+    type: "error",
+  },
+  { inputs: [], name: "MintToZeroAddressBlocked", type: "error" },
+  { inputs: [], name: "MintingDateNotReached", type: "error" },
   {
     inputs: [{ internalType: "address", name: "owner", type: "address" }],
     name: "OwnableInvalidOwner",
@@ -407,8 +438,21 @@ export const TokenABI = [
     type: "error",
   },
   {
+    inputs: [
+      { internalType: "uint8", name: "bits", type: "uint8" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+    ],
+    name: "SafeCastOverflowedUintDowncast",
+    type: "error",
+  },
+  {
     inputs: [{ internalType: "string", name: "str", type: "string" }],
     name: "StringTooLong",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "expiry", type: "uint256" }],
+    name: "VotesExpiredSignature",
     type: "error",
   },
   {
@@ -419,6 +463,26 @@ export const TokenABI = [
       { indexed: false, internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "Approval",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "delegator", type: "address" },
+      { indexed: true, internalType: "address", name: "fromDelegate", type: "address" },
+      { indexed: true, internalType: "address", name: "toDelegate", type: "address" },
+    ],
+    name: "DelegateChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "delegate", type: "address" },
+      { indexed: false, internalType: "uint256", name: "previousVotes", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "newVotes", type: "uint256" },
+    ],
+    name: "DelegateVotesChanged",
     type: "event",
   },
   { anonymous: false, inputs: [], name: "EIP712DomainChanged", type: "event" },
@@ -433,6 +497,12 @@ export const TokenABI = [
   },
   {
     anonymous: false,
+    inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
+    name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
     inputs: [
       { indexed: true, internalType: "address", name: "from", type: "address" },
       { indexed: true, internalType: "address", name: "to", type: "address" },
@@ -442,9 +512,57 @@ export const TokenABI = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
+    name: "Unpaused",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "CLOCK_MODE",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "DOMAIN_SEPARATOR",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MINIMUM_TIME_BETWEEN_MINTS",
+    outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MINT_CAP",
+    outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TOKEN_INITIAL_SUPPLY",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TOKEN_NAME",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TOKEN_SYMBOL",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
@@ -476,9 +594,81 @@ export const TokenABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
+    name: "burn",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+    ],
+    name: "burnFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint32", name: "pos", type: "uint32" },
+    ],
+    name: "checkpoints",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint48", name: "_key", type: "uint48" },
+          { internalType: "uint208", name: "_value", type: "uint208" },
+        ],
+        internalType: "struct Checkpoints.Checkpoint208",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "clock",
+    outputs: [{ internalType: "uint48", name: "", type: "uint48" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "decimals",
     outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "delegatee", type: "address" }],
+    name: "delegate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "delegatee", type: "address" },
+      { internalType: "uint256", name: "nonce", type: "uint256" },
+      { internalType: "uint256", name: "expiry", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
+    ],
+    name: "delegateBySig",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "delegates",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -498,13 +688,44 @@ export const TokenABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "uint256", name: "timepoint", type: "uint256" }],
+    name: "getPastTotalSupply",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "timepoint", type: "uint256" },
+    ],
+    name: "getPastVotes",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "getVotes",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "uint96", name: "amount", type: "uint96" },
     ],
     name: "mint",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "mintingAllowedAfter",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -522,9 +743,24 @@ export const TokenABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "numCheckpoints",
+    outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  {
+    inputs: [],
+    name: "paused",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
@@ -592,6 +828,7 @@ export const TokenABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" },
 ];
 
 export const GradientBucket = [
